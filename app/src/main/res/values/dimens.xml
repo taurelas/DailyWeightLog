@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="column1" type="dimen" format="float">0.34</item>
+    <item name="column2" type="dimen" format="float">0.58</item>
+    <item name="column3" type="dimen" format="float">0.81</item>
+</resources>
