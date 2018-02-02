@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference android:key="height"
+    <EditTextPreference android:key="@string/pref_height_key"
         android:title="Height"
+
         />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="show_fat_percentage"
-        android:summaryOff="Not measuring fat percentage"
-        android:summaryOn="Measuring fat percentage"
-        android:title="Fat percentage" />
+    <!--<CheckBoxPreference
+        android:defaultValue="@bool/pref_fat_pc_default"
+        android:key="@string/pref_fat_pc_key"
+        android:summaryOff="@string/pref_fat_pc_hide_summary"
+        android:summaryOn="@string/pref_fat_pc_show_summary"
+        android:title="@string/pref_fat_pc_title" />-->
+    <!--<ListPreference
+        android:defaultValue="@string/pref_units_value_default"
+        android:entries="@array/pref_units_option_labels"
+        android:entryValues="@array/pref_units_option_values"
+        android:key="@string/pref_units_key"
+        android:title="@string/pref_units_title" />-->
     <ListPreference
-        android:defaultValue="metric"
-        android:entries="@array/pref_system_option_labels"
-        android:entryValues="@array/pref_system_values"
-        android:key="measurement_system"
-        android:title="@string/measurement_system_title" />
-    <ListPreference
-        android:defaultValue="male"
-        android:entries="@array/pref_sex_labels"
-        android:entryValues="@array/pref_sex_values"
-        android:key="sex"
-        android:title="Sex" />
+        android:defaultValue="@string/pref_sex_value_default"
+        android:entries="@array/pref_sex_option_labels"
+        android:entryValues="@array/pref_sex_option_values"
+        android:key="@string/pref_sex_key"
+        android:title="@string/pref_sex_title" />
 
 </PreferenceScreen>

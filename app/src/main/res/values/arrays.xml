@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_system_option_labels">
-        <item>@string/pref_measurement_system_label_metric</item>
-        <item>@string/pref_measurement_system_label_imperial</item>
+    <string-array name="pref_units_option_labels">
+        <item>@string/pref_units_label_metric</item>
+        <item>@string/pref_units_label_imperial</item>
     </string-array>
-    <string-array name="pref_system_values">
-        <item>@string/pref_measurement_system_value_metric</item>
-        <item>@string/pref_measurement_system_value_imperial</item>
+    <string-array name="pref_units_option_values">
+        <item>@string/pref_units_value_metric</item>
+        <item>@string/pref_units_value_imperial</item>
     </string-array>
-    <string-array name="pref_sex_labels">
-        <item>Male</item>
-        <item>Female</item>
+    <string-array name="pref_sex_option_labels">
+        <item>@string/pref_sex_label_male</item>
+        <item>@string/pref_sex_label_female</item>
     </string-array>
 
-    <string-array name="pref_sex_values">
-        <item>male</item>
-        <item>female</item>
+    <string-array name="pref_sex_option_values">
+        <item>@string/pref_sex_value_male</item>
+        <item>@string/pref_sex_value_female</item>
     </string-array>
 
 </resources>

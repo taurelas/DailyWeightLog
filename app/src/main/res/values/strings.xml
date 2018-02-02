@@ -1,11 +1,26 @@
 <resources>
-    <string name="app_name">Aweigh</string>
+    <string name="app_name">Daily Weight Log</string>
     <string name="settings">Settings</string>
     <string name="chart">Chart</string>
-    <string name="pref_measurement_system_label_metric" translatable="false">Metric (kg, cm)</string>
-    <string name="pref_measurement_system_value_metric" translatable="false">metric</string>
-    <string name="pref_measurement_system_value_imperial" translatable="false">imperial</string>
-    <string name="pref_measurement_system_label_imperial" translatable="false">Imperial (lbs, ft/in)</string>
-    <string name="measurement_system_title">Units</string>
+    <string name="pref_units_key" translatable="false">unit_system</string>
+    <string name="pref_units_label_metric" >Metric (kg, cm)</string>
+    <string name="pref_units_label_imperial">Imperial (lbs, ft/in)</string>
+    <string name="pref_units_value_default">@string/pref_units_value_metric</string>
+    <string name="pref_units_value_metric" translatable="false">metric</string>
+    <string name="pref_units_value_imperial" translatable="false">imperial</string>
+    <string name="pref_units_title">Units</string>
+    <string name="pref_fat_pc_key" translatable="false">show_fat_percentage</string>
+    <string name="pref_fat_pc_hide_summary">Not measuring fat percentage</string>
+    <string name="pref_fat_pc_show_summary">Measuring fat percentage</string>
+    <string name="pref_fat_pc_title">Fat percentage</string>
+    <string name="pref_sex_value_male">male</string>
+    <string name="pref_sex_value_female">female</string>
+    <string name="pref_sex_label_male">Male</string>
+    <string name="pref_sex_label_female">Female</string>
+    <string name="pref_sex_key">sex</string>
+    <string name="pref_sex_title">Sex</string>
+    <string name="pref_sex_value_default">@string/pref_sex_value_male</string>
+    <string name="pref_height_key">height</string>
+    <string name="pref_height_value_default"/>
 
 </resources>
