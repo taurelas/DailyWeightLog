@@ -29,4 +29,9 @@ class Units {
 
         return bigDecimal.floatValue();
     }
+
+    public static String getWeightTextWithUnits(float weight) {
+
+        return weight + " kg";
+    }
 }
