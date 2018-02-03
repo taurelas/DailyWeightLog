@@ -14,7 +14,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         RecyclerView rv = findViewById(R.id.recyclerView);
 
-        HistoryAdapter adapter = new HistoryAdapter();
+        HistoryAdapter adapter = new HistoryAdapter(new Presenter(this).getWeightData());
 
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(this));

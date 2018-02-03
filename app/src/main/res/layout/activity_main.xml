@@ -69,11 +69,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
+        android:onClick="addWeight"
         android:tint="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="@+id/tv_fat_pc_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_fat_pc_label"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"
+        android:layout_marginRight="32dp" />
 
     <TextView
         android:id="@+id/tv_prev_weight_label"
@@ -83,7 +85,8 @@
         android:layout_marginTop="16dp"
         android:text="Previous weight"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_fat_pc" />
+        app:layout_constraintTop_toBottomOf="@+id/et_fat_pc"
+        android:layout_marginLeft="32dp" />
 
     <Button
         android:id="@+id/button"

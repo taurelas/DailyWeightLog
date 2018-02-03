@@ -1,16 +1,24 @@
 package com.leadinsource.dailyweightlog;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+
+import com.leadinsource.dailyweightlog.db.DataContract;
+import com.leadinsource.dailyweightlog.db.DbHelper;
 
 public class MainActivity extends AppCompatActivity {
 
+    EditText etWeight, etFatPc;
 
+    long lastInsertedId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        etWeight = findViewById(R.id.et_today_weight);
+        etFatPc = findViewById(R.id.et_fat_pc);
+
     }
 
     @Override
@@ -44,5 +56,49 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+
+    public void addWeight(View view) {
+
+        float weight, fatPc;
+
+
+        if(etWeight.getText().length()==0) {
+            return;
+        }
+
+        try {
+            weight = Float.parseFloat(etWeight.getText().toString());
+        } catch(NumberFormatException nfe) {
+            nfe.printStackTrace();
+            return;
+        }
+
+        SQLiteDatabase db = new DbHelper(this).getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(DataContract.WeightEntry.COLUMN_WEIGHT_IN_KG, weight);
+        if(etFatPc.getText().length()>0) {
+
+            try {
+                fatPc = Float.parseFloat(etFatPc.getText().toString());
+                values.put(DataContract.WeightEntry.COLUMN_FAT_PC, fatPc);
+            } catch (NumberFormatException nfe) {
+                nfe.printStackTrace();
+            }
+        }
+
+        lastInsertedId = db.insert(DataContract.WeightEntry.TABLE_NAME, null, values);
+        etWeight.setText("");
+        etFatPc.setText("");
+
+    }
+
+    void deleteWeight(long id) {
+        SQLiteDatabase db = new DbHelper(this).getWritableDatabase();
+
+        db.delete(DataContract.WeightEntry.TABLE_NAME, DataContract.WeightEntry._ID + "=" + id, null);
     }
 }
