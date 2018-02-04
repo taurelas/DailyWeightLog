@@ -3,6 +3,7 @@ package com.leadinsource.dailyweightlog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     EditText etWeight, etFatPc;
 
     long lastInsertedId;
+    private Uri lastInsertedUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        SQLiteDatabase db = new DbHelper(this).getWritableDatabase();
-
         ContentValues values = new ContentValues();
 
         values.put(DataContract.WeightEntry.COLUMN_WEIGHT_IN_KG, weight);
@@ -90,7 +90,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        lastInsertedId = db.insert(DataContract.WeightEntry.TABLE_NAME, null, values);
+        //lastInsertedId = db.insert(DataContract.WeightEntry.TABLE_NAME, null, values);
+        Uri uri = getContentResolver().insert(DataContract.WeightEntry.CONTENT_URI, values);
+        if(uri!= null) {
+            lastInsertedId = Long.parseLong(uri.getLastPathSegment());
+            lastInsertedUri = uri;
+        }
+
         etWeight.setText("");
         etFatPc.setText("");
 

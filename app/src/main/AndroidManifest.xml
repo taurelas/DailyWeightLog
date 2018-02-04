@@ -20,8 +20,12 @@
         </activity>
         <activity
             android:name="com.leadinsource.dailyweightlog.SettingsActivity"
-            android:parentActivityName="com.leadinsource.dailyweightlog.MainActivity"></activity>
-        <activity android:name="com.leadinsource.dailyweightlog.HistoryActivity"></activity>
+            android:parentActivityName="com.leadinsource.dailyweightlog.MainActivity" />
+        <activity android:name="com.leadinsource.dailyweightlog.HistoryActivity" />
+        <provider
+            android:authorities="com.leadinsource.dailyweightlog"
+            android:name="com.leadinsource.dailyweightlog.db.WeightContentProvider"
+            android:exported="false" />
     </application>
 
 </manifest>
