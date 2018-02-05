@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -25,7 +27,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.leadinsource.dailyweightlog.db.DataContract;
-import com.leadinsource.dailyweightlog.utils.Notifications;
 import com.leadinsource.dailyweightlog.utils.ReminderUtils;
 import com.leadinsource.dailyweightlog.utils.Units;
 
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private Uri lastInsertedUri;
     private WeightAdapter todayWeightAdapter;
-    private Button undoButton;
+    private ImageButton undoButton, shareButton;
 
     LineChart chart;
 
@@ -77,6 +78,37 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 getSupportLoaderManager().restartLoader(CHART_LOADER_ID, null, MainActivity.this);
                 deleteWeight();
                 displayWeightInputUI();
+            }
+        });
+
+        shareButton = findViewById(R.id.btnShare);
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String mimeType = "text/plain";
+                String title = "Share your today's weight";
+                float weight;
+
+
+                if (etWeight.getText().length() == 0) {
+                    return;
+                }
+
+                try {
+                    weight = Float.parseFloat(etWeight.getText().toString());
+                } catch (NumberFormatException nfe) {
+                    nfe.printStackTrace();
+                    return;
+                }
+
+                String textToShare = "Today I weigh only " + Units.getWeightTextWithUnits(weight);
+
+                ShareCompat.IntentBuilder.from(MainActivity.this)
+                        .setChooserTitle(title)
+                        .setType(mimeType)
+                        .setText(textToShare)
+                        .startChooser();
+
             }
         });
 
@@ -181,7 +213,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         int loaderId = loader.getId();
 
         if (loaderId == CHART_LOADER_ID) {
-            setUpChart(data);
+            if(data.getCount()>0) {
+                setUpChart(data);
+            }
             return;
         }
 
