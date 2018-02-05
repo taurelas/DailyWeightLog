@@ -28,5 +28,7 @@
     <string name="bmi_header">BMI</string>
     <string name="previous_weight">Previous weight</string>
     <string name="today_s_weight">Today\'s weight</string>
+    <string name="full_history">Full history</string>
+    <string name="undo">Undo</string>
 
 </resources>
