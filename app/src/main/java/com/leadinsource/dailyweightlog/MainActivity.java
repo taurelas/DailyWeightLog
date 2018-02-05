@@ -19,13 +19,19 @@ import android.widget.EditText;
 
 import com.leadinsource.dailyweightlog.db.DataContract;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int PREVIOUS_WEIGHT_LOADER_ID = 1;
     private static final int TODAY_WEIGHT_LOADER_ID = 2;
+    private static final int CHECK_TODAY_WEIGHT_LOADER_ID = 3;
 
     EditText etWeight, etFatPc;
     RecyclerView rvPrevious, rvToday;
+
+    private boolean weightEnteredToday = false;
 
     private Uri lastInsertedUri;
     private WeightAdapter todayWeightAdapter;
@@ -62,7 +68,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         rvPrevious = findViewById(R.id.rv_previous);
         rvToday = findViewById(R.id.rv_today);
 
-        getSupportLoaderManager().initLoader(PREVIOUS_WEIGHT_LOADER_ID, null, this);
+        getSupportLoaderManager().initLoader(CHECK_TODAY_WEIGHT_LOADER_ID, null, this);
+
+
 
     }
 
@@ -152,12 +160,40 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         int loaderId = loader.getId();
 
+        if (loaderId == CHECK_TODAY_WEIGHT_LOADER_ID) {
+            weightEnteredToday = weightEnteredToday(data);
+            if(weightEnteredToday) {
+                getSupportLoaderManager().initLoader(PREVIOUS_WEIGHT_LOADER_ID, null, this);
+                displayWeightAddedUI();
+            } else {
+                getSupportLoaderManager().initLoader(PREVIOUS_WEIGHT_LOADER_ID, null, this);
+                displayWeightInputUI();
+            }
+            return;
+        }
+
         if (loaderId == PREVIOUS_WEIGHT_LOADER_ID) {
             setUpPreviousWeights(data);
         } else {
             setUpTodayWeights(data);
         }
 
+    }
+
+    private boolean weightEnteredToday(Cursor data) {
+        if (data.moveToFirst()) {
+            String date = data.getString(data.getColumnIndex(DataContract.WeightEntry.COLUMN_DATE));
+
+            Timestamp timestamp = Timestamp.valueOf(date);
+
+            Date savedDate = new Date(timestamp.getTime());
+
+            Date currentDay = Units.stripTime(new Date(System.currentTimeMillis()));
+
+            return savedDate.after(currentDay);
+        } else {
+            return false;
+        }
     }
 
     private void setUpTodayWeights(Cursor data) {
@@ -175,7 +211,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void setUpPreviousWeights(Cursor data) {
-        WeightAdapter previousWeightAdapter = new WeightAdapter(data, 3);
+
+        WeightAdapter previousWeightAdapter;
+
+        if(weightEnteredToday) {
+            previousWeightAdapter = new WeightAdapter(data, WeightAdapter.PREVIOUS_NO_TODAY);
+        } else {
+            previousWeightAdapter = new WeightAdapter(data, WeightAdapter.PREVIOUS);
+        }
+
         rvPrevious.setAdapter(previousWeightAdapter);
         rvPrevious.setLayoutManager(new LinearLayoutManager(this));
         rvPrevious.setHasFixedSize(true);

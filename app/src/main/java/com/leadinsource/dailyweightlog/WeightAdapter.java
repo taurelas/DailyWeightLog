@@ -2,21 +2,15 @@ package com.leadinsource.dailyweightlog;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.leadinsource.dailyweightlog.db.DataContract;
-import com.leadinsource.dailyweightlog.db.ExampleData;
 
 import java.sql.Timestamp;
-
-import android.text.format.DateFormat;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * Responsible for displaying the history of weightings
@@ -24,8 +18,13 @@ import java.util.Calendar;
 
 public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder> {
 
+    public static final int TODAY = 1;
+    public static final int PREVIOUS = 3;
+    public static final int PREVIOUS_NO_TODAY = 2;
+
     private Cursor cursor;
     int displayElements = 0;
+    int offsetPosition=0;
 
     public WeightAdapter(Cursor cursor) {
         this.cursor = cursor;
@@ -34,6 +33,9 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
     public WeightAdapter(Cursor cursor, int displayElements) {
         this.cursor = cursor;
         this.displayElements = displayElements;
+        if(displayElements==PREVIOUS_NO_TODAY) {
+            offsetPosition = 1;
+        }
     }
 
     @Override
@@ -46,8 +48,10 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
+        int dataPosition = position + offsetPosition;
+
         // moving the cursor to the position, but return if it can't go there
-        if (!cursor.moveToPosition(position)) {
+        if (!cursor.moveToPosition(dataPosition)) {
             return;
         }
 
@@ -72,7 +76,11 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
     public int getItemCount() {
 
         if (displayElements > 0) {
-            return displayElements;
+            if(displayElements==PREVIOUS_NO_TODAY) {
+                return PREVIOUS;
+            } else {
+                return displayElements;
+            }
         }
 
         return cursor.getCount();
