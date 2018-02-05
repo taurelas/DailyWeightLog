@@ -11,19 +11,29 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.leadinsource.dailyweightlog.db.DataContract;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final int CHART_LOADER_ID = 0;
     private static final int PREVIOUS_WEIGHT_LOADER_ID = 1;
     private static final int TODAY_WEIGHT_LOADER_ID = 2;
     private static final int CHECK_TODAY_WEIGHT_LOADER_ID = 3;
@@ -36,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private Uri lastInsertedUri;
     private WeightAdapter todayWeightAdapter;
     private Button undoButton;
+
+    LineChart chart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onClick(View view) {
                 getSupportLoaderManager().destroyLoader(TODAY_WEIGHT_LOADER_ID);
+                getSupportLoaderManager().destroyLoader(CHART_LOADER_ID);
+                getSupportLoaderManager().restartLoader(CHART_LOADER_ID, null, MainActivity.this);
                 deleteWeight();
                 displayWeightInputUI();
             }
@@ -68,6 +82,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         rvPrevious = findViewById(R.id.rv_previous);
         rvToday = findViewById(R.id.rv_today);
+
+        chart = findViewById(R.id.chart);
+
+        getSupportLoaderManager().initLoader(CHART_LOADER_ID, null, this);
 
         getSupportLoaderManager().initLoader(CHECK_TODAY_WEIGHT_LOADER_ID, null, this);
     }
@@ -124,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             lastInsertedUri = uri;
         }
 
+        getSupportLoaderManager().restartLoader(CHART_LOADER_ID, null, this);
         displayWeightAddedUI();
     }
 
@@ -151,19 +170,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new WeightLoader(this);
-
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         int loaderId = loader.getId();
 
+        if (loaderId == CHART_LOADER_ID) {
+            setUpChart(data);
+            return;
+        }
+
         if (loaderId == CHECK_TODAY_WEIGHT_LOADER_ID) {
             weightEnteredToday = weightEnteredToday(data);
-            if(weightEnteredToday) {
+            if (weightEnteredToday) {
                 data.moveToFirst();
                 long id = data.getLong(data.getColumnIndex(DataContract.WeightEntry._ID));
-                lastInsertedUri = DataContract.WeightEntry.CONTENT_URI.buildUpon().appendPath(""+id).build();
+                lastInsertedUri = DataContract.WeightEntry.CONTENT_URI.buildUpon().appendPath("" + id).build();
                 getSupportLoaderManager().initLoader(PREVIOUS_WEIGHT_LOADER_ID, null, this);
                 displayWeightAddedUI();
             } else {
@@ -215,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         WeightAdapter previousWeightAdapter;
 
-        if(weightEnteredToday) {
+        if (weightEnteredToday) {
             previousWeightAdapter = new WeightAdapter(data, WeightAdapter.PREVIOUS_NO_TODAY);
         } else {
             previousWeightAdapter = new WeightAdapter(data, WeightAdapter.PREVIOUS);
@@ -229,5 +252,33 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         //setUpPreviousWeights(null);
+    }
+
+    private void setUpChart(Cursor data) {
+
+        ArrayList<Entry> entries = new ArrayList<>();
+
+        data.moveToFirst();
+        while (!data.isAfterLast()) {
+            long id = data.getLong(data.getColumnIndex(DataContract.WeightEntry._ID));
+            float weight = data.getFloat(data.getColumnIndex(DataContract.WeightEntry.COLUMN_WEIGHT_IN_KG));
+            Log.d("Chart", "adding " + id + " / " + weight);
+            entries.add(new Entry(id, weight));
+            data.moveToNext();
+        }
+
+        Collections.reverse(entries);
+        LineDataSet dataSet = new LineDataSet(entries, "Weight in time");
+        dataSet.setColor(getResources().getColor(R.color.colorAccent));
+        LineData lineData = new LineData(dataSet);
+
+        chart.setData(lineData);
+        chart.setDrawGridBackground(false);
+        chart.setDescription(null);
+        YAxis yAxis = chart.getAxisRight();
+        yAxis.setEnabled(false);
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setEnabled(false);
+        chart.invalidate();
     }
 }
