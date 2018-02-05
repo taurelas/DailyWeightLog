@@ -10,6 +10,8 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
 import android.widget.Toast;
 
+import com.leadinsource.dailyweightlog.utils.Units;
+
 
 /**
  * Provides a list of settings, defined in preferences.xml.

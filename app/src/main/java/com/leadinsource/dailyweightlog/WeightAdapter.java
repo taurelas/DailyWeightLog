@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.leadinsource.dailyweightlog.db.DataContract;
+import com.leadinsource.dailyweightlog.utils.Units;
 
 import java.sql.Timestamp;
 
