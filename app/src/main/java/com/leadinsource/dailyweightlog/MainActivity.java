@@ -25,6 +25,9 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.leadinsource.dailyweightlog.db.DataContract;
+import com.leadinsource.dailyweightlog.utils.Notifications;
+import com.leadinsource.dailyweightlog.utils.ReminderUtils;
+import com.leadinsource.dailyweightlog.utils.Units;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -144,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         getSupportLoaderManager().restartLoader(CHART_LOADER_ID, null, this);
         displayWeightAddedUI();
+        ReminderUtils.scheduleWeightReminder(this);
     }
 
     private void displayWeightAddedUI() {

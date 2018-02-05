@@ -1,4 +1,4 @@
-package com.leadinsource.dailyweightlog;
+package com.leadinsource.dailyweightlog.utils;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -8,8 +8,8 @@ import java.util.Date;
  * Provides utility methods related to unit conversion and display
  */
 
-class Units {
-    static String getHeightTextWithUnits(String height) {
+public class Units {
+    public static String getHeightTextWithUnits(String height) {
         if(height.isEmpty()) {
             return "";
         } else {
@@ -17,7 +17,7 @@ class Units {
         }
     }
 
-    static float getMetricBMI(float height, float weight) {
+    public static float getMetricBMI(float height, float weight) {
         return round(weight / (height * height),2);
     }
 
