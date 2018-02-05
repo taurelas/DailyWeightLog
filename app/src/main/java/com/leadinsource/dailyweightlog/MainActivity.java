@@ -2,10 +2,15 @@ package com.leadinsource.dailyweightlog;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+import android.database.Cursor;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,18 +18,22 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.leadinsource.dailyweightlog.db.DataContract;
-import com.leadinsource.dailyweightlog.db.DbHelper;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private static final int PREVIOUS_WEIGHT_LOADER_ID = 1;
+    private static final int TODAY_WEIGHT_LOADER_ID = 2;
 
     EditText etWeight, etFatPc;
+    RecyclerView rvPrevious, rvToday;
 
-    long lastInsertedId;
     private Uri lastInsertedUri;
+    private WeightAdapter todayWeightAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         Button button = findViewById(R.id.button);
@@ -37,8 +46,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button undoButton = findViewById(R.id.btnUndo);
+        undoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getSupportLoaderManager().destroyLoader(TODAY_WEIGHT_LOADER_ID);
+                deleteWeight();
+                displayWeightInputUI();
+            }
+        });
+
         etWeight = findViewById(R.id.et_today_weight);
         etFatPc = findViewById(R.id.et_fat_pc);
+
+        rvPrevious = findViewById(R.id.rv_previous);
+        rvToday = findViewById(R.id.rv_today);
+
+        getSupportLoaderManager().initLoader(PREVIOUS_WEIGHT_LOADER_ID, null, this);
 
     }
 
@@ -52,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.settings) {
+        if (item.getItemId() == R.id.settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         }
@@ -65,14 +89,13 @@ public class MainActivity extends AppCompatActivity {
 
         float weight, fatPc;
 
-
-        if(etWeight.getText().length()==0) {
+        if (etWeight.getText().length() == 0) {
             return;
         }
 
         try {
             weight = Float.parseFloat(etWeight.getText().toString());
-        } catch(NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
             return;
         }
@@ -80,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         ContentValues values = new ContentValues();
 
         values.put(DataContract.WeightEntry.COLUMN_WEIGHT_IN_KG, weight);
-        if(etFatPc.getText().length()>0) {
+        if (etFatPc.getText().length() > 0) {
 
             try {
                 fatPc = Float.parseFloat(etFatPc.getText().toString());
@@ -90,21 +113,76 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        //lastInsertedId = db.insert(DataContract.WeightEntry.TABLE_NAME, null, values);
         Uri uri = getContentResolver().insert(DataContract.WeightEntry.CONTENT_URI, values);
-        if(uri!= null) {
-            lastInsertedId = Long.parseLong(uri.getLastPathSegment());
+        if (uri != null) {
             lastInsertedUri = uri;
         }
 
+        displayWeightAddedUI();
+    }
+
+    private void displayWeightAddedUI() {
+        ConstraintLayout inputLayout = findViewById(R.id.inputLayout);
+        inputLayout.setVisibility(View.INVISIBLE);
+        ConstraintLayout todayLayout = findViewById(R.id.todayLayout);
+        todayLayout.setVisibility(View.VISIBLE);
+        getSupportLoaderManager().initLoader(TODAY_WEIGHT_LOADER_ID, null, this);
+    }
+
+    private void displayWeightInputUI() {
+        ConstraintLayout todayLayout = findViewById(R.id.todayLayout);
+        todayLayout.setVisibility(View.INVISIBLE);
+        ConstraintLayout inputLayout = findViewById(R.id.inputLayout);
+        inputLayout.setVisibility(View.VISIBLE);
         etWeight.setText("");
         etFatPc.setText("");
+    }
+
+    void deleteWeight() {
+        getContentResolver().delete(lastInsertedUri, null, null);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new WeightLoader(this);
 
     }
 
-    void deleteWeight(long id) {
-        SQLiteDatabase db = new DbHelper(this).getWritableDatabase();
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        int loaderId = loader.getId();
 
-        db.delete(DataContract.WeightEntry.TABLE_NAME, DataContract.WeightEntry._ID + "=" + id, null);
+        if (loaderId == PREVIOUS_WEIGHT_LOADER_ID) {
+            setUpPreviousWeights(data);
+        } else {
+            setUpTodayWeights(data);
+        }
+
+    }
+
+    private void setUpTodayWeights(Cursor data) {
+        if (todayWeightAdapter == null) {
+            todayWeightAdapter = new WeightAdapter(data, 1);
+            rvToday.setAdapter(todayWeightAdapter);
+            rvToday.setLayoutManager(new LinearLayoutManager(this));
+            rvToday.setHasFixedSize(true);
+        } else {
+            rvToday = findViewById(R.id.rv_today);
+            rvToday.setAdapter(todayWeightAdapter);
+            todayWeightAdapter.updateData(data);
+            todayWeightAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void setUpPreviousWeights(Cursor data) {
+        WeightAdapter previousWeightAdapter = new WeightAdapter(data, 3);
+        rvPrevious.setAdapter(previousWeightAdapter);
+        rvPrevious.setLayoutManager(new LinearLayoutManager(this));
+        rvPrevious.setHasFixedSize(true);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        //setUpPreviousWeights(null);
     }
 }

@@ -14,4 +14,13 @@
         <item name="android:layout_weight">1</item>
         <item name="android:layout_gravity">center</item>
     </style>
+    <style name="weightList" >
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+<!--
+        <item name="android:layout_marginStart">@dimen/activity_margin</item>
+        <item name="android:layout_marginEnd">@dimen/activity_margin</item>
+        <item name="android:layout_marginLeft">@dimen/activity_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_margin</item>-->
+    </style>
 </resources>

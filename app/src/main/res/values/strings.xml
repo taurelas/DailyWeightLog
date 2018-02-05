@@ -26,5 +26,7 @@
     <string name="weight_header">Weight</string>
     <string name="date_header">Date</string>
     <string name="bmi_header">BMI</string>
+    <string name="previous_weight">Previous weight</string>
+    <string name="today_s_weight">Today\'s weight</string>
 
 </resources>

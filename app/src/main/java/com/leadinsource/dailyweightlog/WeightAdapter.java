@@ -11,20 +11,29 @@ import com.leadinsource.dailyweightlog.db.DataContract;
 import com.leadinsource.dailyweightlog.db.ExampleData;
 
 import java.sql.Timestamp;
-import java.text.DateFormat;
+
+import android.text.format.DateFormat;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Responsible for displaying the history of weightings
  */
 
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
+public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder> {
 
-    Cursor cursor;
+    private Cursor cursor;
+    int displayElements = 0;
 
-    public HistoryAdapter(Cursor cursor) {
+    public WeightAdapter(Cursor cursor) {
         this.cursor = cursor;
+    }
+
+    public WeightAdapter(Cursor cursor, int displayElements) {
+        this.cursor = cursor;
+        this.displayElements = displayElements;
     }
 
     @Override
@@ -45,16 +54,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         String date = cursor.getString(cursor.getColumnIndex(DataContract.WeightEntry.COLUMN_DATE));
         Timestamp timestamp = Timestamp.valueOf(date);
 
-        timestamp.getDate();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        holder.tvDate.setText(dateFormat.format(timestamp));
-
-        /*try {
-            holder.tvDate.setText(dateFormat.parse(date).toString());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }*/
+        holder.tvDate.setText(DateFormat.getDateFormat(holder.tvDate.getContext()).format(timestamp));
 
         float weight = cursor.getFloat(cursor.getColumnIndex(DataContract.WeightEntry.COLUMN_WEIGHT_IN_KG));
 
@@ -64,13 +64,22 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
         holder.tvFatPc.setText(fatPc + " %");
 
-        holder.tvBMI.setText(Units.getMetricBMI(173f, weight)+"");
+        holder.tvBMI.setText(Units.getMetricBMI(173f, weight) + "");
 
     }
 
     @Override
     public int getItemCount() {
+
+        if (displayElements > 0) {
+            return displayElements;
+        }
+
         return cursor.getCount();
+    }
+
+    public void updateData(Cursor cursor) {
+        this.cursor = cursor;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -86,13 +95,5 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             tvBMI = itemView.findViewById(R.id.tvBMI);
         }
 
-        void bind(int listIndex) {
-            tvDate.setText(ExampleData.getDate(listIndex));
-            tvWeight.setText(ExampleData.getWeight(listIndex));
-            tvFatPc.setText(ExampleData.getFatPc(listIndex));
-            tvBMI.setText(String.valueOf(Units.getMetricBMI(173f, Float.parseFloat(ExampleData.getWeight(listIndex)))));
-        }
     }
-
-
 }
