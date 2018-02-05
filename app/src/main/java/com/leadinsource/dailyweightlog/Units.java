@@ -1,6 +1,8 @@
 package com.leadinsource.dailyweightlog;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Provides utility methods related to unit conversion and display
@@ -33,5 +35,16 @@ class Units {
     public static String getWeightTextWithUnits(float weight) {
 
         return weight + " kg";
+    }
+
+    public static Date stripTime(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND,0);
+        cal.set(Calendar.MILLISECOND,0);
+
+        return cal.getTime();
     }
 }
