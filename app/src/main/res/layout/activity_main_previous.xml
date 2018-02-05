@@ -20,7 +20,9 @@
         style="@style/weightList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_prev_weight_label" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_prev_weight_label"
+        tools:listitem="@layout/history_list_item"
+        tools:itemCount="3"/>
 
     <Button
         android:id="@+id/button"
@@ -29,7 +31,7 @@
 
         android:layout_marginTop="8dp"
         android:background="@color/colorAccent"
-        android:text="Full history"
+        android:text="@string/full_history"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rv_previous" />
 </android.support.constraint.ConstraintLayout>
