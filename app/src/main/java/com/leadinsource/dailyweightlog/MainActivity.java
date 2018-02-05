@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private Uri lastInsertedUri;
     private WeightAdapter todayWeightAdapter;
+    private Button undoButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        Button undoButton = findViewById(R.id.btnUndo);
+        undoButton = findViewById(R.id.btnUndo);
         undoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,9 +70,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         rvToday = findViewById(R.id.rv_today);
 
         getSupportLoaderManager().initLoader(CHECK_TODAY_WEIGHT_LOADER_ID, null, this);
-
-
-
     }
 
     @Override
@@ -163,6 +161,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (loaderId == CHECK_TODAY_WEIGHT_LOADER_ID) {
             weightEnteredToday = weightEnteredToday(data);
             if(weightEnteredToday) {
+                data.moveToFirst();
+                long id = data.getLong(data.getColumnIndex(DataContract.WeightEntry._ID));
+                lastInsertedUri = DataContract.WeightEntry.CONTENT_URI.buildUpon().appendPath(""+id).build();
                 getSupportLoaderManager().initLoader(PREVIOUS_WEIGHT_LOADER_ID, null, this);
                 displayWeightAddedUI();
             } else {
