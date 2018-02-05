@@ -30,5 +30,7 @@
     <string name="today_s_weight">Today\'s weight</string>
     <string name="full_history">Full history</string>
     <string name="undo">Undo</string>
+    <string name="share_button">Share button</string>
+    <string name="undo_button">Undo button</string>
 
 </resources>
