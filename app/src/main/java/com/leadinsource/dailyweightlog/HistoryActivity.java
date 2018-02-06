@@ -1,25 +1,26 @@
 package com.leadinsource.dailyweightlog;
 
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import com.leadinsource.dailyweightlog.databinding.ActivityHistoryBinding;
 
 public class HistoryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int WEIGHT_LOADER_ID = 0;
 
-    private RecyclerView rv;
+    ActivityHistoryBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history);
 
-        rv = findViewById(R.id.recyclerView);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_history);
 
         getSupportLoaderManager().initLoader(WEIGHT_LOADER_ID, null, this);
     }
@@ -35,9 +36,9 @@ public class HistoryActivity extends AppCompatActivity implements LoaderManager.
     void setUpRecyclerView(Cursor cursor) {
         WeightAdapter adapter = new WeightAdapter(cursor);
 
-        rv.setAdapter(adapter);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setHasFixedSize(true);
+        binding.recyclerView.setAdapter(adapter);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerView.setHasFixedSize(true);
     }
 
 
