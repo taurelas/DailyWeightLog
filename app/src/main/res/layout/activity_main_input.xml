@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -29,7 +29,7 @@
         android:id="@+id/tv_fat_pc_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fat %"
+        android:text="@string/fat_pc"
         app:layout_constraintBaseline_toBaselineOf="@+id/et_fat_pc"
         app:layout_constraintEnd_toEndOf="@+id/tv_today_weight_label" />
 
@@ -57,6 +57,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_fat_pc_label"
         app:srcCompat="@android:drawable/ic_input_add"
-        android:layout_marginRight="32dp" />
+        android:layout_marginRight="32dp"
+        android:contentDescription="@string/add_button" />
 </android.support.constraint.ConstraintLayout>
 </layout>

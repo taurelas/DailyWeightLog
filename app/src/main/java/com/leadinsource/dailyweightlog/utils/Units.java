@@ -21,6 +21,10 @@ public class Units {
         return round(weight / (height * height),2);
     }
 
+    public static String getMetricBMIString(float height, float weight) {
+        return getMetricBMI(height, weight) + "";
+    }
+
     /*static float getImperialBMI(float heightInInches, float weightInLbs) {
         return round((weightInLbs / (heightInInches*heightInInches))*703,2);
     }*/
@@ -46,5 +50,9 @@ public class Units {
         cal.set(Calendar.MILLISECOND,0);
 
         return cal.getTime();
+    }
+
+    public static String getFatPcString(float fatPc) {
+        return fatPc + " %";
     }
 }
