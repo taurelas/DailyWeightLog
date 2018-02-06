@@ -4,4 +4,5 @@
     <item name="column2" type="dimen" format="float">0.58</item>
     <item name="column3" type="dimen" format="float">0.81</item>
     <dimen name="history_header_rv_gap">8dp</dimen>
+    <dimen name="button_padding">8dp</dimen>
 </resources>

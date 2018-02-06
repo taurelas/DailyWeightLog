@@ -3,6 +3,7 @@ package com.leadinsource.dailyweightlog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -11,21 +12,17 @@ import android.support.v4.app.ShareCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 
-import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.leadinsource.dailyweightlog.databinding.ActivityMainBinding;
 import com.leadinsource.dailyweightlog.db.DataContract;
 import com.leadinsource.dailyweightlog.utils.ReminderUtils;
 import com.leadinsource.dailyweightlog.utils.Units;
@@ -42,26 +39,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int TODAY_WEIGHT_LOADER_ID = 2;
     private static final int CHECK_TODAY_WEIGHT_LOADER_ID = 3;
 
-    EditText etWeight, etFatPc;
-    RecyclerView rvPrevious, rvToday;
-
     private boolean weightEnteredToday = false;
 
     private Uri lastInsertedUri;
     private WeightAdapter todayWeightAdapter;
-    private ImageButton undoButton, shareButton;
 
-    LineChart chart;
+    ActivityMainBinding binding;
+
+    //LineChart chart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        Button button = findViewById(R.id.button);
-
-        button.setOnClickListener(new View.OnClickListener() {
+        binding.layoutPrevious.moreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
@@ -69,8 +62,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        undoButton = findViewById(R.id.btnUndo);
-        undoButton.setOnClickListener(new View.OnClickListener() {
+        binding.todayLayout.btnUndo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getSupportLoaderManager().destroyLoader(TODAY_WEIGHT_LOADER_ID);
@@ -81,8 +73,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        shareButton = findViewById(R.id.btnShare);
-        shareButton.setOnClickListener(new View.OnClickListener() {
+        binding.todayLayout.btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String mimeType = "text/plain";
@@ -90,12 +81,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 float weight;
 
 
-                if (etWeight.getText().length() == 0) {
+                if (binding.inputLayout.etTodayWeight.getText().length() == 0) {
                     return;
                 }
 
                 try {
-                    weight = Float.parseFloat(etWeight.getText().toString());
+                    weight = Float.parseFloat(binding.inputLayout.etTodayWeight.getText().toString());
                 } catch (NumberFormatException nfe) {
                     nfe.printStackTrace();
                     return;
@@ -112,13 +103,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        etWeight = findViewById(R.id.et_today_weight);
-        etFatPc = findViewById(R.id.et_fat_pc);
-
-        rvPrevious = findViewById(R.id.rv_previous);
-        rvToday = findViewById(R.id.rv_today);
-
-        chart = findViewById(R.id.chart);
+        //chart = findViewById(R.id.chart);
 
         getSupportLoaderManager().initLoader(CHART_LOADER_ID, null, this);
 
@@ -148,12 +133,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         float weight, fatPc;
 
-        if (etWeight.getText().length() == 0) {
+        if (binding.inputLayout.etTodayWeight.getText().length() == 0) {
             return;
         }
 
         try {
-            weight = Float.parseFloat(etWeight.getText().toString());
+            weight = Float.parseFloat(binding.inputLayout.etTodayWeight.getText().toString());
         } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
             return;
@@ -162,10 +147,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         ContentValues values = new ContentValues();
 
         values.put(DataContract.WeightEntry.COLUMN_WEIGHT_IN_KG, weight);
-        if (etFatPc.getText().length() > 0) {
+        if (binding.inputLayout.etFatPc.getText().length() > 0) {
 
             try {
-                fatPc = Float.parseFloat(etFatPc.getText().toString());
+                fatPc = Float.parseFloat(binding.inputLayout.etFatPc.getText().toString());
                 values.put(DataContract.WeightEntry.COLUMN_FAT_PC, fatPc);
             } catch (NumberFormatException nfe) {
                 nfe.printStackTrace();
@@ -195,8 +180,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         todayLayout.setVisibility(View.INVISIBLE);
         ConstraintLayout inputLayout = findViewById(R.id.inputLayout);
         inputLayout.setVisibility(View.VISIBLE);
-        etWeight.setText("");
-        etFatPc.setText("");
+        binding.inputLayout.etTodayWeight.setText("");
+        binding.inputLayout.etFatPc.setText("");
     }
 
     void deleteWeight() {
@@ -213,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         int loaderId = loader.getId();
 
         if (loaderId == CHART_LOADER_ID) {
-            if(data.getCount()>0) {
+            if (data.getCount() > 0) {
                 setUpChart(data);
             }
             return;
@@ -261,12 +246,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void setUpTodayWeights(Cursor data) {
         if (todayWeightAdapter == null) {
             todayWeightAdapter = new WeightAdapter(data, 1);
-            rvToday.setAdapter(todayWeightAdapter);
-            rvToday.setLayoutManager(new LinearLayoutManager(this));
-            rvToday.setHasFixedSize(true);
+            binding.todayLayout.rvToday.setAdapter(todayWeightAdapter);
+            binding.todayLayout.rvToday.setLayoutManager(new LinearLayoutManager(this));
+            binding.todayLayout.rvToday.setHasFixedSize(true);
         } else {
-            rvToday = findViewById(R.id.rv_today);
-            rvToday.setAdapter(todayWeightAdapter);
+            binding.todayLayout.rvToday.setAdapter(todayWeightAdapter);
             todayWeightAdapter.updateData(data);
             todayWeightAdapter.notifyDataSetChanged();
         }
@@ -282,9 +266,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             previousWeightAdapter = new WeightAdapter(data, WeightAdapter.PREVIOUS);
         }
 
-        rvPrevious.setAdapter(previousWeightAdapter);
-        rvPrevious.setLayoutManager(new LinearLayoutManager(this));
-        rvPrevious.setHasFixedSize(true);
+        binding.layoutPrevious.rvPrevious.setAdapter(previousWeightAdapter);
+        binding.layoutPrevious.rvPrevious.setLayoutManager(new LinearLayoutManager(this));
+        binding.layoutPrevious.rvPrevious.setHasFixedSize(true);
     }
 
     @Override
@@ -310,13 +294,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         dataSet.setColor(getResources().getColor(R.color.colorAccent));
         LineData lineData = new LineData(dataSet);
 
-        chart.setData(lineData);
-        chart.setDrawGridBackground(false);
-        chart.setDescription(null);
-        YAxis yAxis = chart.getAxisRight();
+        binding.chart.setData(lineData);
+        binding.chart.setDrawGridBackground(false);
+        binding.chart.setDescription(null);
+        YAxis yAxis = binding.chart.getAxisRight();
         yAxis.setEnabled(false);
-        XAxis xAxis = chart.getXAxis();
+        XAxis xAxis = binding.chart.getXAxis();
         xAxis.setEnabled(false);
-        chart.invalidate();
+        binding.chart.invalidate();
     }
 }
