@@ -67,9 +67,9 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
 
         float fatPc = cursor.getFloat(cursor.getColumnIndex(DataContract.WeightEntry.COLUMN_FAT_PC));
 
-        holder.tvFatPc.setText(fatPc + " %");
+        holder.tvFatPc.setText(Units.getFatPcString(fatPc));
 
-        holder.tvBMI.setText(Units.getMetricBMI(173f, weight) + "");
+        holder.tvBMI.setText(Units.getMetricBMIString(173f, weight));
 
     }
 
