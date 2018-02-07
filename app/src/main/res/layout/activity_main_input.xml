@@ -48,16 +48,13 @@
 
     <ImageView
         android:id="@+id/iv_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
+        style="@style/specialButton"
+
         android:onClick="addWeight"
-        android:tint="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="@+id/tv_fat_pc_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_fat_pc_label"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:layout_marginRight="32dp"
+        app:srcCompat="@drawable/ic_add_black_24dp"
         android:contentDescription="@string/add_button" />
 </android.support.constraint.ConstraintLayout>
 </layout>
