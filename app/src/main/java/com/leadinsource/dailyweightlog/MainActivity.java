@@ -29,6 +29,7 @@ import com.leadinsource.dailyweightlog.utils.Units;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
@@ -108,10 +109,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        //chart = findViewById(R.id.chart);
-
         getSupportLoaderManager().initLoader(CHART_LOADER_ID, null, this);
 
+        // check if last entered weight was today
         getSupportLoaderManager().initLoader(CHECK_TODAY_WEIGHT_LOADER_ID, null, this);
     }
 
@@ -211,16 +211,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if (loaderId == CHECK_TODAY_WEIGHT_LOADER_ID) {
             weightEnteredToday = weightEnteredToday(data);
-            if (weightEnteredToday) {
-                data.moveToFirst();
-                long id = data.getLong(data.getColumnIndex(DataContract.WeightEntry._ID));
-                lastInsertedUri = DataContract.WeightEntry.CONTENT_URI.buildUpon().appendPath("" + id).build();
-                getSupportLoaderManager().initLoader(PREVIOUS_WEIGHT_LOADER_ID, null, this);
-                displayWeightAddedUI();
-            } else {
-                getSupportLoaderManager().initLoader(PREVIOUS_WEIGHT_LOADER_ID, null, this);
-                displayWeightInputUI();
-            }
+            showAppropriateUI(weightEnteredToday, data);
             return;
         }
 
@@ -232,21 +223,46 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+    /**
+     * Checks if the date's day in top element in the cursor is not before today.
+     *
+     * It does not cater for any mischief such as changing the system time.
+     *
+     * @param data - Cursor with weights to get the first one
+     * @return true if the weight was entered today already, otherwise false
+     */
     private boolean weightEnteredToday(Cursor data) {
         if (data.moveToFirst()) {
             String date = data.getString(data.getColumnIndex(DataContract.WeightEntry.COLUMN_DATE));
-
             Timestamp timestamp = Timestamp.valueOf(date);
 
             Date savedDate = new Date(timestamp.getTime());
 
-            Date currentDay = Units.stripTime(new Date(System.currentTimeMillis()));
+            Date savedDay = Units.stripTime(savedDate);
 
-            return savedDate.after(currentDay);
+            Date currentDay = Units.stripTime(new Date(System.currentTimeMillis()));
+                // savedDate or saveDay?
+            return !savedDay.before(currentDay);
         } else {
             return false;
         }
     }
+
+
+    private void showAppropriateUI(boolean weightEnteredToday, Cursor data) {
+        if (weightEnteredToday) {
+            data.moveToFirst();
+            long id = data.getLong(data.getColumnIndex(DataContract.WeightEntry._ID));
+            lastInsertedUri = DataContract.WeightEntry.CONTENT_URI.buildUpon().appendPath("" + id).build();
+            getSupportLoaderManager().initLoader(PREVIOUS_WEIGHT_LOADER_ID, null, this);
+            displayWeightAddedUI();
+        } else {
+            getSupportLoaderManager().initLoader(PREVIOUS_WEIGHT_LOADER_ID, null, this);
+            displayWeightInputUI();
+        }
+    }
+
+
 
     private void setUpTodayWeights(Cursor data) {
         if (todayWeightAdapter == null) {
@@ -287,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         while (!data.isAfterLast()) {
             long id = data.getLong(data.getColumnIndex(DataContract.WeightEntry._ID));
             float weight = data.getFloat(data.getColumnIndex(DataContract.WeightEntry.COLUMN_WEIGHT_IN_KG));
-            Log.d("Chart", "adding " + id + " / " + weight);
+            //Log.d("Chart", "adding " + id + " / " + weight);
             entries.add(new Entry(id, weight));
             data.moveToNext();
         }
