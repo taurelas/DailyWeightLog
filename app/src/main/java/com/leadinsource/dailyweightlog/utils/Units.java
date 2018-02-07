@@ -22,7 +22,11 @@ public class Units {
     }
 
     public static String getMetricBMIString(float height, float weight) {
-        return getMetricBMI(height, weight) + "";
+        if(height>0) {
+            return getMetricBMI(height, weight) + "";
+        } else {
+            return "-";
+        }
     }
 
     /*static float getImperialBMI(float heightInInches, float weightInLbs) {
