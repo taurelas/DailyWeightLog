@@ -39,12 +39,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int TODAY_WEIGHT_LOADER_ID = 2;
     private static final int CHECK_TODAY_WEIGHT_LOADER_ID = 3;
 
+    private static final String TAG = "Main Activity";
+    public static final int SETTINGS_REQUEST_CODE = 15;
+    public static final String PREFERENCES_CHANGED = "changed_prefs";
+
     private boolean weightEnteredToday = false;
 
     private Uri lastInsertedUri;
     private WeightAdapter todayWeightAdapter;
 
     ActivityMainBinding binding;
+    private WeightAdapter previousWeightAdapter;
 
     //LineChart chart;
 
@@ -92,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     return;
                 }
 
-                String textToShare = "Today I weigh only " + Units.getWeightTextWithUnits(weight);
+                String textToShare = "Hello! Today I weigh only " + Units.getWeightTextWithUnits(weight);
 
                 ShareCompat.IntentBuilder.from(MainActivity.this)
                         .setChooserTitle(title)
@@ -122,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, SETTINGS_REQUEST_CODE);
         }
 
         return true;
@@ -258,8 +263,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void setUpPreviousWeights(Cursor data) {
 
-        WeightAdapter previousWeightAdapter;
-
         if (weightEnteredToday) {
             previousWeightAdapter = new WeightAdapter(data, WeightAdapter.PREVIOUS_NO_TODAY);
         } else {
@@ -302,5 +305,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         XAxis xAxis = binding.chart.getXAxis();
         xAxis.setEnabled(false);
         binding.chart.invalidate();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode==SETTINGS_REQUEST_CODE) {
+            boolean changed = data.getBooleanExtra(PREFERENCES_CHANGED, false);
+            if(changed) {
+                todayWeightAdapter.notifyDataSetChanged();
+                previousWeightAdapter.notifyDataSetChanged();
+            }
+        }
     }
 }

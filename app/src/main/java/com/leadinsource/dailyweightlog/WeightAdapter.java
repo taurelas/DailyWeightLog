@@ -1,8 +1,11 @@
 package com.leadinsource.dailyweightlog;
 
+import android.content.Context;
 import android.database.Cursor;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,19 +27,26 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
     public static final int PREVIOUS_NO_TODAY = 2;
 
     private Cursor cursor;
-    int displayElements = 0;
-    int offsetPosition=0;
+    private int displayElements = 0;
+    private int offsetPosition=0;
+    private Context context;
 
-    public WeightAdapter(Cursor cursor) {
+    WeightAdapter(Cursor cursor) {
         this.cursor = cursor;
     }
 
-    public WeightAdapter(Cursor cursor, int displayElements) {
+    WeightAdapter(Cursor cursor, int displayElements) {
         this.cursor = cursor;
         this.displayElements = displayElements;
         if(displayElements==PREVIOUS_NO_TODAY) {
             offsetPosition = 1;
         }
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        context = recyclerView.getContext();
     }
 
     @Override
@@ -69,7 +79,18 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
 
         holder.tvFatPc.setText(Units.getFatPcString(fatPc));
 
-        holder.tvBMI.setText(Units.getMetricBMIString(173f, weight));
+
+        float height = 0f;
+        String heightString = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(R.string.pref_height_key), "");
+
+        try {
+            height = Float.parseFloat(heightString);
+        } catch (NumberFormatException nfe) {
+            Log.e("WeightAdapter", "Unable to parse height from settings");
+            nfe.printStackTrace();
+        }
+
+        holder.tvBMI.setText(Units.getMetricBMIString(height, weight));
 
     }
 
@@ -87,7 +108,7 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
         return cursor.getCount();
     }
 
-    public void updateData(Cursor cursor) {
+    void updateData(Cursor cursor) {
         this.cursor = cursor;
     }
 

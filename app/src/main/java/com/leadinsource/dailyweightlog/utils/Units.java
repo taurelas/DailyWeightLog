@@ -17,8 +17,8 @@ public class Units {
         }
     }
 
-    public static float getMetricBMI(float height, float weight) {
-        return round(weight / (height * height),2);
+    private static float getMetricBMI(float height, float weight) {
+        return round(weight / ((height/100) * (height/100)),1);
     }
 
     public static String getMetricBMIString(float height, float weight) {
