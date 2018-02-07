@@ -1,5 +1,6 @@
 package com.leadinsource.dailyweightlog;
 
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -10,11 +11,12 @@ import android.support.v7.widget.LinearLayoutManager;
 
 import com.leadinsource.dailyweightlog.databinding.ActivityHistoryBinding;
 
-public class HistoryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class HistoryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final int WEIGHT_LOADER_ID = 0;
 
     ActivityHistoryBinding binding;
+    private WeightAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,7 @@ public class HistoryActivity extends AppCompatActivity implements LoaderManager.
     }
 
     void setUpRecyclerView(Cursor cursor) {
-        WeightAdapter adapter = new WeightAdapter(cursor);
+        adapter = new WeightAdapter(cursor);
 
         binding.recyclerView.setAdapter(adapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -58,4 +60,8 @@ public class HistoryActivity extends AppCompatActivity implements LoaderManager.
         setUpRecyclerView(null);
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        adapter.notifyDataSetChanged();
+    }
 }
