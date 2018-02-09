@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference android:key="@string/pref_height_key"
-        android:title="Height"
-
-        />
-    <!--<CheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="@bool/pref_fat_pc_default"
         android:key="@string/pref_fat_pc_key"
-        android:summaryOff="@string/pref_fat_pc_hide_summary"
-        android:summaryOn="@string/pref_fat_pc_show_summary"
-        android:title="@string/pref_fat_pc_title" />-->
+        android:summary=""
+        android:title="@string/pref_uses_fat_pc_title" />
+    <CheckBoxPreference
+    android:defaultValue="@bool/pref_uses_bmi_default"
+    android:key="@string/pref_uses_bmi_key"
+        android:summary=""
+        android:title="@string/pref_uses_bmi_title" />
+
+    <EditTextPreference
+        android:key="@string/pref_height_key"
+        android:title="Height" />
+
     <!--<ListPreference
         android:defaultValue="@string/pref_units_value_default"
         android:entries="@array/pref_units_option_labels"

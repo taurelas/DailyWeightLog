@@ -15,7 +15,7 @@ import com.leadinsource.dailyweightlog.utils.Units;
 
 /**
  * Provides a list of settings, defined in preferences.xml.
- *
+ * <p>
  * Also implements listeners responsible for setting the summary for some of those settings and
  * checks if the value of the height in EditTextPreference is in order.
  */
@@ -36,6 +36,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         Preference preference = findPreference(getString(R.string.pref_height_key));
         preference.setOnPreferenceChangeListener(this);
 
+        setHeightPreference();
+
         SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
         PreferenceScreen preferenceScreen = getPreferenceScreen();
 
@@ -43,25 +45,27 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         // to set preference summary on all but CheckBoxPreference (which handles its summary)
         int count = preferenceScreen.getPreferenceCount();
 
-        for(int i=0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
             Preference p = preferenceScreen.getPreference(i);
-            if(!(p instanceof CheckBoxPreference)) {
+            if (!(p instanceof CheckBoxPreference)) {
                 String value = sharedPreferences.getString(p.getKey(), "");
                 setPreferenceSummary(p, value);
             }
 
         }
+
+
     }
 
     private void setPreferenceSummary(Preference preference, String value) {
-        if(preference instanceof ListPreference) {
+        if (preference instanceof ListPreference) {
             ListPreference listPreference = (ListPreference) preference;
             int prefIndex = listPreference.findIndexOfValue(value);
-            if(prefIndex>=0) {
+            if (prefIndex >= 0) {
                 listPreference.setSummary(listPreference.getEntries()[prefIndex]);
             }
         }
-        if(preference instanceof EditTextPreference) {
+        if (preference instanceof EditTextPreference) {
             preference.setSummary(Units.getHeightTextWithUnits(value));
             //EditTextPreference etPreference = (EditTextPreference) preference;
             //String value = etPreference.getText().toString();
@@ -69,14 +73,30 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         }
     }
 
+    /**
+     * Disables height preference if BMI not used
+     *
+     * @param sharedPreferences
+     * @param key
+     */
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Preference preference = findPreference(key);
-        if(!(preference instanceof CheckBoxPreference)) {
-            String value = sharedPreferences.getString(preference.getKey(), "");
-            setPreferenceSummary(preference, value);
-        }
 
+        if (key.equals(getString(R.string.pref_uses_bmi_key))) {
+            setHeightPreference();
+        }
+    }
+
+    void setHeightPreference() {
+        CheckBoxPreference usesBmiPreference =
+                (CheckBoxPreference) findPreference(getString(R.string.pref_uses_bmi_key));
+
+        if (usesBmiPreference.isChecked()) {
+            findPreference(getString(R.string.pref_height_key)).setEnabled(true);
+        } else {
+            findPreference(getString(R.string.pref_height_key)).setEnabled(false);
+        }
     }
 
     @Override
@@ -91,12 +111,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         Toast error = Toast.makeText(getContext(), "Please select a correct height", Toast.LENGTH_SHORT);
 
         String heightKey = getString(R.string.pref_height_key);
-        if(preference.getKey().equals(heightKey)) {
+        if (preference.getKey().equals(heightKey)) {
 
             String stringHeight = ((String) (newValue)).trim();
             try {
                 float height = Float.parseFloat(stringHeight);
-                if(height > 270 || height < 10) {
+                if (height > 270 || height < 10) {
                     error.show();
                     return false;
                 }

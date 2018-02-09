@@ -12,7 +12,7 @@
     <string name="pref_fat_pc_key" translatable="false">show_fat_percentage</string>
     <string name="pref_fat_pc_hide_summary">Not measuring fat percentage</string>
     <string name="pref_fat_pc_show_summary">Measuring fat percentage</string>
-    <string name="pref_fat_pc_title">Fat percentage</string>
+    <string name="pref_uses_fat_pc_title">Use fat percentage</string>
     <string name="pref_sex_value_male">male</string>
     <string name="pref_sex_value_female">female</string>
     <string name="pref_sex_label_male">Male</string>
@@ -36,5 +36,9 @@
     <string name="fat_pc">Fat %</string>
     <string name="add_button">Add button</string>
     <string name="todays_weight">Today\'s weight</string>
+    <string name="pref_uses_bmi_key">uses-bmi</string>
+    <string name="pref_uses_bmi_no_summary">Don\'t use BMI</string>
+    <string name="pref_uses_bmi_yes_summary">Use BMI</string>
+    <string name="pref_uses_bmi_title">Use BMI</string>
 
 </resources>
