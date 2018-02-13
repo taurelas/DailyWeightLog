@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
-        android:defaultValue="@bool/pref_fat_pc_default"
-        android:key="@string/pref_fat_pc_key"
+        android:defaultValue="@bool/pref_uses_fat_pc_default"
+        android:key="@string/pref_uses_fat_pc_key"
         android:summary=""
         android:title="@string/pref_uses_fat_pc_title" />
     <CheckBoxPreference

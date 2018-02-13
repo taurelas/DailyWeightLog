@@ -25,9 +25,9 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
         Log.d(TAG, "Reading preferences");
-        Log.d(TAG, getResources().getString(R.string.pref_fat_pc_key) + ": " +
-                sharedPreferences.getBoolean(getResources().getString(R.string.pref_fat_pc_key),
-                        getResources().getBoolean(R.bool.pref_fat_pc_default)));
+        Log.d(TAG, getResources().getString(R.string.pref_uses_fat_pc_key) + ": " +
+                sharedPreferences.getBoolean(getResources().getString(R.string.pref_uses_fat_pc_key),
+                        getResources().getBoolean(R.bool.pref_uses_fat_pc_default)));
     }
 
     @Override
@@ -47,9 +47,9 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         //Test
 
-        if (key.equals(getString(R.string.pref_fat_pc_key))) {
-            Log.d(TAG, getString(R.string.pref_fat_pc_key) + " " + " changed to " +
-                    sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.pref_fat_pc_default)));
+        if (key.equals(getString(R.string.pref_uses_fat_pc_key))) {
+            Log.d(TAG, getString(R.string.pref_uses_fat_pc_key) + " " + " changed to " +
+                    sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.pref_uses_fat_pc_default)));
         }
         if (key.equals(getString(R.string.pref_units_key))) {
             Log.d(TAG, getString(R.string.pref_units_key) + " " + " changed to " +

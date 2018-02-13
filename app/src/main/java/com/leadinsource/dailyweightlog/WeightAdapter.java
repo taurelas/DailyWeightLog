@@ -23,8 +23,8 @@ import java.sql.Timestamp;
 public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder> {
 
     public static final int TODAY = 1;
-    public static final int PREVIOUS = 3;
-    public static final int PREVIOUS_NO_TODAY = 2;
+    static final int PREVIOUS = 3;
+    static final int PREVIOUS_NO_TODAY = 2;
 
     private Cursor cursor;
     private int displayElements = 0;
@@ -79,7 +79,8 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
 
         holder.tvFatPc.setText(Units.getFatPcString(fatPc));
 
-
+        // we can't use height in float due to SettingsFragment
+        // long story short we tried and it didn't work.
         float height = 0f;
         String heightString = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(R.string.pref_height_key), "");
 

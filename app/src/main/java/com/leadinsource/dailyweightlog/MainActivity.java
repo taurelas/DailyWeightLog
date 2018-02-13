@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.AppThemeBar);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
