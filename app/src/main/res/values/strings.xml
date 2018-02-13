@@ -45,7 +45,7 @@
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
     <string name="slide_1_title">Introduction</string>
-    <string name="slide_1_desc">We have a few questions so the app fit your needs</string>
+    <string name="slide_1_desc">We have a few questions to fit your needs</string>
     <string name="slide_2_title">Body Mass Index (BMI)</string>
     <string name="slide_2_desc">Body Mass Index (BMI) may not reflect your situation well if you are very muscular or have very little muscle mass.</string>
     <string name="slide_3_title">Provide Height</string>
