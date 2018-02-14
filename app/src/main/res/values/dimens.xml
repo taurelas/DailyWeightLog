@@ -5,4 +5,17 @@
     <item name="column3" type="dimen" format="float">0.81</item>
     <dimen name="history_header_rv_gap">8dp</dimen>
     <dimen name="button_padding">8dp</dimen>
+    <dimen name="activity_margin">32dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="dots_height">30dp</dimen>
+    <dimen name="dots_margin_bottom">20dp</dimen>
+    <dimen name="img_width_height">150dp</dimen>
+    <dimen name="slide_title">30dp</dimen>
+    <dimen name="slide_desc">16dp</dimen>
+    <dimen name="desc_padding">16dp</dimen>
+    <dimen name="desc_margin_top">0dp</dimen>
+    <dimen name="title_margin_vertical">15dp</dimen>
 </resources>

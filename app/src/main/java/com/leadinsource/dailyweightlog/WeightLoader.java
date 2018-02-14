@@ -14,9 +14,9 @@ import com.leadinsource.dailyweightlog.db.DataContract;
  */
 
 public class WeightLoader extends AsyncTaskLoader<Cursor> {
-    Cursor retCursor = null;
-    ContentResolver contentResolver;
-
+    private Cursor retCursor = null;
+    private ContentResolver contentResolver;
+    private String TAG;
 
     WeightLoader(Context context) {
         super(context);
@@ -25,7 +25,8 @@ public class WeightLoader extends AsyncTaskLoader<Cursor> {
 
     @Override
     protected void onStartLoading() {
-        Log.d("Loader", "onStartLoading");
+        TAG = "Loader no " + getId();
+        Log.d(TAG, "onStartLoading");
         if(retCursor!= null) {
             deliverResult(retCursor);
         } else {
@@ -35,7 +36,7 @@ public class WeightLoader extends AsyncTaskLoader<Cursor> {
 
     @Override
     public Cursor loadInBackground() {
-        Log.d("Loader", "loadInBackground");
+        Log.d(TAG, "loadInBackground");
         try {
             return contentResolver.query(DataContract.WeightEntry.CONTENT_URI,
                     null,
@@ -51,6 +52,7 @@ public class WeightLoader extends AsyncTaskLoader<Cursor> {
 
     @Override
     public void deliverResult(Cursor data) {
+        Log.d(TAG, "delivering result");
         retCursor = data;
         super.deliverResult(data);
     }

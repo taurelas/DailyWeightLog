@@ -57,6 +57,11 @@ public class Units {
     }
 
     public static String getFatPcString(float fatPc) {
-        return fatPc + " %";
+        if(fatPc==0.0f) {
+            return "";
+        } else {
+            return fatPc + " %";
+        }
+
     }
 }

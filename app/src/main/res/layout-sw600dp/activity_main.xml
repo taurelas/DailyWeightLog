@@ -43,7 +43,10 @@
                 android:id="@+id/inputLayout"
                 layout="@layout/activity_main_input"
                 android:visibility="visible" />
-
+            <include
+                android:id="@+id/inputNoFat"
+                layout="@layout/activity_main_input_no_fat_pc"
+                android:visibility="gone" />
             <include
                 android:id="@+id/todayLayout"
                 layout="@layout/activity_main_today"

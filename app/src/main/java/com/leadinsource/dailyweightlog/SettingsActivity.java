@@ -18,16 +18,19 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-
         Log.d(TAG, "Reading preferences");
-        Log.d(TAG, getResources().getString(R.string.pref_fat_pc_key) + ": " +
-                sharedPreferences.getBoolean(getResources().getString(R.string.pref_fat_pc_key),
-                        getResources().getBoolean(R.bool.pref_fat_pc_default)));
+        Log.d(TAG, getResources().getString(R.string.pref_uses_fat_pc_key) + ": " +
+                sharedPreferences.getBoolean(getResources().getString(R.string.pref_uses_fat_pc_key),
+                        getResources().getBoolean(R.bool.pref_uses_fat_pc_default)));
     }
 
     @Override
@@ -35,6 +38,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
 
         switch (item.getItemId()) {
             case android.R.id.home:
+                Log.d(TAG, "clicked home button");
                 setResult(isChanged);
                 break;
 
@@ -45,38 +49,12 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        //Test
-
-        if (key.equals(getString(R.string.pref_fat_pc_key))) {
-            Log.d(TAG, getString(R.string.pref_fat_pc_key) + " " + " changed to " +
-                    sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.pref_fat_pc_default)));
-        }
-        if (key.equals(getString(R.string.pref_units_key))) {
-            Log.d(TAG, getString(R.string.pref_units_key) + " " + " changed to " +
-                    sharedPreferences.getString(key, getResources().getString(R.string.pref_units_value_default)));
-        }
-        if (key.equals(getString(R.string.pref_sex_key))) {
-            Log.d(TAG, getString(R.string.pref_sex_key) + " " + " changed to " +
-                    sharedPreferences.getString(key, getResources().getString(R.string.pref_sex_value_default)));
-        }
-        if (key.equals(getString(R.string.pref_height_key))) {
-            Log.d(TAG, getString(R.string.pref_height_key) + " " + " changed to " +
-                    sharedPreferences.getString(key, getResources().getString(R.string.pref_height_value_default)));
-            isChanged = true;
-        }
-
+        isChanged = true;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        setResult(isChanged);
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
