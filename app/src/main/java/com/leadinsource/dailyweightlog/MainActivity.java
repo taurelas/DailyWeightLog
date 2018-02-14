@@ -1,5 +1,6 @@
 package com.leadinsource.dailyweightlog;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,11 +12,14 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -61,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
+
         binding.layoutPrevious.moreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String mimeType = "text/plain";
                 String title = "Share your today's weight";
                 float weight;
-
 
                 if (binding.inputLayout.etTodayWeight.getText().length() == 0) {
                     return;
@@ -114,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         // check if last entered weight was today
         getSupportLoaderManager().initLoader(CHECK_TODAY_WEIGHT_LOADER_ID, null, this);
+
     }
 
     @Override
@@ -134,34 +139,56 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return true;
     }
 
-
+    /**
+     * Triggered when add button is pressed
+     *
+     * @param view reference to the button, not used here.
+     */
     public void addWeight(View view) {
 
-        float weight, fatPc;
+        float weight, fatPc = 0.0f;
 
-        if (binding.inputLayout.etTodayWeight.getText().length() == 0) {
+        EditText etWeight;
+        EditText etFatPc;
+
+        if (doesUseFatPc()) {
+            etWeight = binding.inputLayout.etTodayWeight;
+            etFatPc = binding.inputLayout.etFatPc;
+        } else {
+            etWeight = binding.inputNoFat.etTodayWeight;
+            etFatPc = null;
+        }
+        // exit if no weight
+        if (etWeight.getText().length() == 0) {
             return;
         }
 
+        // set error and exit if weight is wrong
         try {
-            weight = Float.parseFloat(binding.inputLayout.etTodayWeight.getText().toString());
+            weight = Float.parseFloat(etWeight.getText().toString());
         } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
+            etWeight.setError("Enter correct weight");
             return;
         }
+
+        // set error and exit if fat % is wrong
+        if (etFatPc != null) {
+            try {
+                fatPc = Float.parseFloat(etFatPc.getText().toString());
+            } catch (NumberFormatException nfe) {
+                nfe.printStackTrace();
+                etFatPc.setError("Enter correct fat percentage");
+                return;
+            }
+        }
+
+        // add numbers to db using loader
 
         ContentValues values = new ContentValues();
 
         values.put(DataContract.WeightEntry.COLUMN_WEIGHT_IN_KG, weight);
-        if (binding.inputLayout.etFatPc.getText().length() > 0) {
-
-            try {
-                fatPc = Float.parseFloat(binding.inputLayout.etFatPc.getText().toString());
-                values.put(DataContract.WeightEntry.COLUMN_FAT_PC, fatPc);
-            } catch (NumberFormatException nfe) {
-                nfe.printStackTrace();
-            }
-        }
+        values.put(DataContract.WeightEntry.COLUMN_FAT_PC, fatPc);
 
         Uri uri = getContentResolver().insert(DataContract.WeightEntry.CONTENT_URI, values);
         if (uri != null) {
@@ -174,20 +201,39 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void displayWeightAddedUI() {
-        ConstraintLayout inputLayout = findViewById(R.id.inputLayout);
-        inputLayout.setVisibility(View.INVISIBLE);
-        ConstraintLayout todayLayout = findViewById(R.id.todayLayout);
-        todayLayout.setVisibility(View.VISIBLE);
+        binding.inputLayout.getRoot().setVisibility(View.INVISIBLE);
+        binding.inputNoFat.getRoot().setVisibility(View.INVISIBLE);
+        binding.todayLayout.getRoot().setVisibility(View.VISIBLE);
         getSupportLoaderManager().initLoader(TODAY_WEIGHT_LOADER_ID, null, this);
     }
 
     private void displayWeightInputUI() {
-        ConstraintLayout todayLayout = findViewById(R.id.todayLayout);
-        todayLayout.setVisibility(View.INVISIBLE);
-        ConstraintLayout inputLayout = findViewById(R.id.inputLayout);
-        inputLayout.setVisibility(View.VISIBLE);
-        binding.inputLayout.etTodayWeight.setText("");
-        binding.inputLayout.etFatPc.setText("");
+        binding.todayLayout.getRoot().setVisibility(View.INVISIBLE);
+
+        if (doesUseFatPc()) {
+            binding.inputNoFat.getRoot().setVisibility(View.INVISIBLE);
+            binding.inputLayout.getRoot().setVisibility(View.VISIBLE);
+            binding.inputLayout.etTodayWeight.setText("");
+            binding.inputLayout.etFatPc.setText("");
+        } else {
+            binding.inputLayout.getRoot().setVisibility(View.INVISIBLE);
+            binding.inputNoFat.getRoot().setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    private boolean doesUseFatPc() {
+        return PreferenceManager
+                .getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.pref_uses_fat_pc_key),
+                        getResources().getBoolean(R.bool.pref_uses_fat_pc_default));
+    }
+
+    private boolean doesUseBMI() {
+        return PreferenceManager
+                .getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.pref_uses_bmi_key),
+                        getResources().getBoolean(R.bool.pref_uses_bmi_default));
     }
 
     void deleteWeight() {
@@ -226,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     /**
      * Checks if the date's day in top element in the cursor is not before today.
-     *
+     * <p>
      * It does not cater for any mischief such as changing the system time.
      *
      * @param data - Cursor with weights to get the first one
@@ -242,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Date savedDay = Units.stripTime(savedDate);
 
             Date currentDay = Units.stripTime(new Date(System.currentTimeMillis()));
-                // savedDate or saveDay?
+            // savedDate or saveDay?
             return !savedDay.before(currentDay);
         } else {
             return false;
@@ -262,7 +308,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             displayWeightInputUI();
         }
     }
-
 
 
     private void setUpTodayWeights(Cursor data) {
@@ -326,12 +371,49 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode==SETTINGS_REQUEST_CODE) {
+        if (requestCode == SETTINGS_REQUEST_CODE) {
             boolean changed = data.getBooleanExtra(PREFERENCES_CHANGED, false);
-            if(changed) {
-                todayWeightAdapter.notifyDataSetChanged();
-                previousWeightAdapter.notifyDataSetChanged();
+            if (changed) {
+                // this is a fallout from using PreferenceFragment in SettingsActivityas we can't
+                // custimise it to cater for this scenario
+                if(doesUseBMI() && isHeightEmpty()) {
+                    setNoBMI();
+                }
+                if (todayWeightAdapter != null) {
+                    Log.d(TAG, "todayWeightAdapter is not null");
+                    todayWeightAdapter.notifyColumnsChanged();
+                } else {
+                    Log.d(TAG, "todayWeightAdapter is null");
+                }
+                previousWeightAdapter.notifyColumnsChanged();
+                if (binding.inputLayout.getRoot().getVisibility() == View.VISIBLE ||
+                        binding.inputNoFat.getRoot().getVisibility() == View.VISIBLE) {
+                    displayWeightInputUI();
+                }
             }
         }
+    }
+
+
+    /**
+     * We manually switch the BMI off as no height.
+     */
+
+    @SuppressLint("ApplySharedPref")
+    private void setNoBMI() {
+        PreferenceManager
+                .getDefaultSharedPreferences(this)
+                .edit()
+                .putBoolean(getString(R.string.pref_uses_bmi_key), false)
+                .commit();
+    }
+
+    private boolean isHeightEmpty() {
+            return PreferenceManager
+                    .getDefaultSharedPreferences(this)
+                    .getString(getString(R.string.pref_height_key),
+                            getString(R.string.pref_height_value_default))
+                    .isEmpty();
+
     }
 }

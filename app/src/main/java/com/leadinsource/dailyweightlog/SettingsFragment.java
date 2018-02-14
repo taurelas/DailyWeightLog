@@ -7,6 +7,7 @@ import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
 import android.widget.Toast;
 
@@ -86,6 +87,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         if (key.equals(getString(R.string.pref_uses_bmi_key))) {
             setHeightPreference();
         }
+
+        if(key.equals(getString(R.string.pref_height_key))) {
+            setHeightPreferenceSummary(sharedPreferences);
+        }
+    }
+
+    private void setHeightPreferenceSummary(SharedPreferences sharedPreferences) {
+
+        String value = sharedPreferences.getString(getString(R.string.pref_height_key),"");
+        findPreference(getString(R.string.pref_height_key)).setSummary(Units.getHeightTextWithUnits(value));
     }
 
     void setHeightPreference() {
@@ -94,6 +105,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
         if (usesBmiPreference.isChecked()) {
             findPreference(getString(R.string.pref_height_key)).setEnabled(true);
+            if(getPreferenceScreen().getSharedPreferences().getString(getString(R.string.pref_height_key),
+                    "").equals("")) {
+                getPreferenceManager().showDialog(findPreference(getString(R.string.pref_height_key)));
+            }
+
         } else {
             findPreference(getString(R.string.pref_height_key)).setEnabled(false);
         }

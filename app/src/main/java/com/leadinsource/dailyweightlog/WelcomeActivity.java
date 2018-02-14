@@ -37,6 +37,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private boolean heightRequired = true;
     float height;
     String heightString = "";
+    final String TAG = "WelcomeActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +48,9 @@ public class WelcomeActivity extends AppCompatActivity {
         if (!firstRunManager.isFirstTimeLaunch()) {
             launchHomeScreen();
             finish();
+        } else {
+            saveDefaultSettings();
         }
-
-        saveDefaultSettings();
 
         // Making notification bar transparent
         if (Build.VERSION.SDK_INT >= 21) {
@@ -91,9 +92,6 @@ public class WelcomeActivity extends AppCompatActivity {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
                 // checking for last page
                 // if last page home screen will be launched
                 int current = getItem(+1);
@@ -103,10 +101,9 @@ public class WelcomeActivity extends AppCompatActivity {
                 } else {
                     EditText editText = findViewById(R.id.etHeight);
                     if(editText!=null) {
-                        if(editText.getText().toString().length()==0) {
+                        if((editText.getText().toString().length()==0) && (heightRequired)) {
                             editText.requestFocus();
                             editText.setError(getString(R.string.enter_valid_height));
-
                         } else {
                             launchHomeScreen();
                         }
