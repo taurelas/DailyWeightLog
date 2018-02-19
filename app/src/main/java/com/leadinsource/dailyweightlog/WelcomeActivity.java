@@ -2,10 +2,10 @@ package com.leadinsource.dailyweightlog;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -25,10 +25,15 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.leadinsource.dailyweightlog.app.DWLApplication;
+
+import javax.inject.Inject;
+
 public class WelcomeActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
+    @Inject SharedPreferences defaultSharedPreferences;
     private LinearLayout dotsLayout;
     private TextView[] dots;
     private int[] layouts;
@@ -42,9 +47,9 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        DWLApplication.app().appComponent().inject(this);
         // Checking for first time launch - before calling setContentView()
-        firstRunManager = new FirstRunManager(this);
+        firstRunManager = new FirstRunManager(defaultSharedPreferences);
         if (!firstRunManager.isFirstTimeLaunch()) {
             launchHomeScreen();
             finish();
@@ -123,19 +128,18 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void saveSetting(String key, boolean value) {
-        PreferenceManager
-                .getDefaultSharedPreferences(this)
+        defaultSharedPreferences
                 .edit()
                 .putBoolean(key, value)
                 .apply();
     }
 
     private void saveSetting(String key, String value) {
-        PreferenceManager
-                .getDefaultSharedPreferences(this)
+        defaultSharedPreferences
                 .edit()
                 .putString(key, value)
                 .apply();
+
     }
 
     private void addBottomDots(int currentPage) {
