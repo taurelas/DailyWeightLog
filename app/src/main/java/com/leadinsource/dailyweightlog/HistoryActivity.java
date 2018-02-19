@@ -4,14 +4,16 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
+import com.leadinsource.dailyweightlog.app.DWLApplication;
 import com.leadinsource.dailyweightlog.databinding.ActivityHistoryBinding;
+
+import javax.inject.Inject;
 
 public class HistoryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -20,9 +22,14 @@ public class HistoryActivity extends AppCompatActivity implements LoaderManager.
     ActivityHistoryBinding binding;
     private WeightAdapter adapter;
 
+    @Inject
+    SharedPreferences defaultSharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DWLApplication.app().appComponent().inject(this);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_history);
 
@@ -37,15 +44,13 @@ public class HistoryActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private boolean doesUseFatPc() {
-        return PreferenceManager
-                .getDefaultSharedPreferences(this)
+        return defaultSharedPreferences
                 .getBoolean(getString(R.string.pref_uses_fat_pc_key),
                         getResources().getBoolean(R.bool.pref_uses_fat_pc_default));
     }
 
     private boolean doesUseBMI() {
-        return PreferenceManager
-                .getDefaultSharedPreferences(this)
+        return defaultSharedPreferences
                 .getBoolean(getString(R.string.pref_uses_bmi_key),
                         getResources().getBoolean(R.bool.pref_uses_bmi_default));
     }

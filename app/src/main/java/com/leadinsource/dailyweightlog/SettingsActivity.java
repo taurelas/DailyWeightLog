@@ -3,33 +3,38 @@ package com.leadinsource.dailyweightlog;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+
+import com.leadinsource.dailyweightlog.app.DWLApplication;
+
+import javax.inject.Inject;
 
 public class SettingsActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "Settings Activity";
     private boolean isChanged = false;
 
+    @Inject
+    SharedPreferences defaultSharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        DWLApplication.app().appComponent().inject(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(this);
-
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        defaultSharedPreferences.registerOnSharedPreferenceChangeListener(this);
         Log.d(TAG, "Reading preferences");
         Log.d(TAG, getResources().getString(R.string.pref_uses_fat_pc_key) + ": " +
-                sharedPreferences.getBoolean(getResources().getString(R.string.pref_uses_fat_pc_key),
+                defaultSharedPreferences.getBoolean(getResources().getString(R.string.pref_uses_fat_pc_key),
                         getResources().getBoolean(R.bool.pref_uses_fat_pc_default)));
     }
 
@@ -55,7 +60,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
     @Override
     protected void onPause() {
         super.onPause();
-        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+        defaultSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     private void setResult(boolean isChanged) {

@@ -7,7 +7,6 @@ import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
 import android.widget.Toast;
 
@@ -77,8 +76,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     /**
      * Disables height preference if BMI not used
      *
-     * @param sharedPreferences
-     * @param key
+     * @param sharedPreferences use by setHeightPreferenceSummary
+     * @param key carries info which preference changed
      */
 
     @Override

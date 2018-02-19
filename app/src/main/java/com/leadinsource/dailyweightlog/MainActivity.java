@@ -3,29 +3,28 @@ package com.leadinsource.dailyweightlog;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.leadinsource.dailyweightlog.app.DWLApplication;
 import com.leadinsource.dailyweightlog.databinding.ActivityMainBinding;
 import com.leadinsource.dailyweightlog.db.DataContract;
 import com.leadinsource.dailyweightlog.utils.ReminderUtils;
@@ -33,9 +32,10 @@ import com.leadinsource.dailyweightlog.utils.Units;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+
+import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -56,11 +56,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     ActivityMainBinding binding;
     private WeightAdapter previousWeightAdapter;
 
+    @Inject
+    SharedPreferences defaultSharedPreferences;
+
     //LineChart chart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DWLApplication.app().appComponent().inject(this);
         setTheme(R.style.AppThemeBar);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
@@ -223,15 +227,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private boolean doesUseFatPc() {
-        return PreferenceManager
-                .getDefaultSharedPreferences(this)
+        return defaultSharedPreferences
                 .getBoolean(getString(R.string.pref_uses_fat_pc_key),
                         getResources().getBoolean(R.bool.pref_uses_fat_pc_default));
     }
 
     private boolean doesUseBMI() {
-        return PreferenceManager
-                .getDefaultSharedPreferences(this)
+        return defaultSharedPreferences
                 .getBoolean(getString(R.string.pref_uses_bmi_key),
                         getResources().getBoolean(R.bool.pref_uses_bmi_default));
     }
@@ -401,16 +403,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @SuppressLint("ApplySharedPref")
     private void setNoBMI() {
-        PreferenceManager
-                .getDefaultSharedPreferences(this)
+        defaultSharedPreferences
                 .edit()
                 .putBoolean(getString(R.string.pref_uses_bmi_key), false)
                 .commit();
     }
 
     private boolean isHeightEmpty() {
-            return PreferenceManager
-                    .getDefaultSharedPreferences(this)
+            return defaultSharedPreferences
                     .getString(getString(R.string.pref_height_key),
                             getString(R.string.pref_height_value_default))
                     .isEmpty();
