@@ -64,7 +64,7 @@ public class HistoryActivity extends AppCompatActivity implements LoaderManager.
     }
 
     void setUpRecyclerView(Cursor cursor) {
-        adapter = new WeightAdapter(cursor);
+        adapter = new WeightAdapter(cursor, defaultSharedPreferences);
 
         binding.recyclerView.setAdapter(adapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));

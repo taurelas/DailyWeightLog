@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-
         binding.layoutPrevious.moreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -314,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void setUpTodayWeights(Cursor data) {
         if (todayWeightAdapter == null) {
-            todayWeightAdapter = new WeightAdapter(data, 1);
+            todayWeightAdapter = new WeightAdapter(data, 1, defaultSharedPreferences);
             binding.todayLayout.rvToday.setAdapter(todayWeightAdapter);
             binding.todayLayout.rvToday.setLayoutManager(new LinearLayoutManager(this));
             binding.todayLayout.rvToday.setHasFixedSize(true);
@@ -328,9 +327,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void setUpPreviousWeights(Cursor data) {
 
         if (weightEnteredToday) {
-            previousWeightAdapter = new WeightAdapter(data, WeightAdapter.PREVIOUS_NO_TODAY);
+            previousWeightAdapter = new WeightAdapter(data, WeightAdapter.PREVIOUS_NO_TODAY, defaultSharedPreferences);
         } else {
-            previousWeightAdapter = new WeightAdapter(data, WeightAdapter.PREVIOUS);
+            previousWeightAdapter = new WeightAdapter(data, WeightAdapter.PREVIOUS, defaultSharedPreferences);
         }
 
         binding.layoutPrevious.rvPrevious.setAdapter(previousWeightAdapter);

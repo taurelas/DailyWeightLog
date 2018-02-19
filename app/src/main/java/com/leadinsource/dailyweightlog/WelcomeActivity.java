@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -29,15 +30,29 @@ import com.leadinsource.dailyweightlog.app.DWLApplication;
 
 import javax.inject.Inject;
 
+import butterknife.BindArray;
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class WelcomeActivity extends AppCompatActivity {
 
-    private ViewPager viewPager;
-    private MyViewPagerAdapter myViewPagerAdapter;
     @Inject SharedPreferences defaultSharedPreferences;
-    private LinearLayout dotsLayout;
+
+    @BindView(R.id.view_pager)  public ViewPager viewPager;
+
+    @BindView(R.id.layoutDots)  public LinearLayout dotsLayout;
+
+    @BindView(R.id.btn_next)    public Button btnNext;
+
+    @BindString(R.string.enter_valid_height) String errorText;
+
+
+
     private TextView[] dots;
     private int[] layouts;
-    private Button btnSkip, btnNext;
+
     private FirstRunManager firstRunManager;
     private boolean heightRequired = true;
     float height;
@@ -63,12 +78,7 @@ public class WelcomeActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_welcome);
-
-        viewPager = findViewById(R.id.view_pager);
-        dotsLayout = findViewById(R.id.layoutDots);
-        //btnSkip = findViewById(R.id.btn_skip);
-        btnNext = findViewById(R.id.btn_next);
-
+        ButterKnife.bind(this);
 
         // layouts of all welcome sliders
         // add few more layouts if you want
@@ -83,48 +93,39 @@ public class WelcomeActivity extends AppCompatActivity {
         // making notification bar transparent
         changeStatusBarColor();
 
-        myViewPagerAdapter = new MyViewPagerAdapter();
-        viewPager.setAdapter(myViewPagerAdapter);
+        viewPager.setAdapter(new MyViewPagerAdapter());
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
+    }
 
-        /*btnSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchHomeScreen();
-            }
-        });*/
+    @OnClick(R.id.btn_next)
+    public void onClick() {
 
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // checking for last page
-                // if last page home screen will be launched
-                int current = getItem(+1);
-                if (current < layouts.length) {
-                    // move to next screen
-                    viewPager.setCurrentItem(current);
+        // binding to check if editText is available
+        @Nullable EditText editText = findViewById(R.id.etHeight);
+
+        // checking for last page
+        // if last page home screen will be launched
+        int current = getItem(+1);
+        if (current < layouts.length) {
+            // move to next screen
+            viewPager.setCurrentItem(current);
+        } else {
+            if (editText!=null) {
+                if ((editText.getText().toString().length() == 0) && (heightRequired)) {
+                    editText.requestFocus();
+                    editText.setError(errorText);
                 } else {
-                    EditText editText = findViewById(R.id.etHeight);
-                    if(editText!=null) {
-                        if((editText.getText().toString().length()==0) && (heightRequired)) {
-                            editText.requestFocus();
-                            editText.setError(getString(R.string.enter_valid_height));
-                        } else {
-                            launchHomeScreen();
-                        }
-                    }
-
+                    launchHomeScreen();
                 }
             }
-        });
+        }
     }
 
     private void saveDefaultSettings() {
-        saveSetting(getString(R.string.pref_uses_bmi_key),
-                getResources().getBoolean(R.bool.pref_uses_bmi_default));
-        saveSetting(getString(R.string.pref_uses_fat_pc_key),
-                getResources().getBoolean(R.bool.pref_uses_fat_pc_default));
-
+        boolean usesBMI = getResources().getBoolean(R.bool.pref_uses_bmi_default);
+        saveSetting(getString(R.string.pref_uses_bmi_key),usesBMI);
+        boolean usesFatPc = getResources().getBoolean(R.bool.pref_uses_fat_pc_default);
+        saveSetting(getString(R.string.pref_uses_fat_pc_key), usesFatPc);
     }
 
     private void saveSetting(String key, boolean value) {
@@ -142,11 +143,14 @@ public class WelcomeActivity extends AppCompatActivity {
 
     }
 
+    @BindArray(R.array.array_dot_active) int[] colorsActive;
+    @BindArray(R.array.array_dot_inactive) int[] colorsInactive;
+
     private void addBottomDots(int currentPage) {
         dots = new TextView[layouts.length];
 
-        int[] colorsActive = getResources().getIntArray(R.array.array_dot_active);
-        int[] colorsInactive = getResources().getIntArray(R.array.array_dot_inactive);
+        //int[] colorsActive = getResources().getIntArray(R.array.array_dot_active);
+        //int[] colorsInactive = getResources().getIntArray(R.array.array_dot_inactive);
 
         dotsLayout.removeAllViews();
         for (int i = 0; i < dots.length; i++) {
@@ -215,18 +219,15 @@ public class WelcomeActivity extends AppCompatActivity {
                 });
             }
 
-
             final EditText etHeight = findViewById(R.id.etHeight);
             if (etHeight != null) {
                 etHeight.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
                     }
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-
                     }
 
                     // to use PreferenceScreen we try to parse the float but save to
@@ -238,7 +239,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             height = Float.parseFloat(s.toString());
                             saveSetting(getString(R.string.pref_height_key), heightString);
                         } catch (NumberFormatException nfe) {
-                            etHeight.setError(getString(R.string.enter_valid_height));
+                            etHeight.setError(errorText);
                         }
 
                     }
