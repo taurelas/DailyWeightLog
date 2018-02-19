@@ -18,6 +18,9 @@ import com.leadinsource.dailyweightlog.utils.Units;
 
 import java.sql.Timestamp;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Responsible for displaying the history of weightings
  */
@@ -35,29 +38,30 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
     private Context context;
     private boolean usesFatPc;
     private boolean usesBMI;
+    private SharedPreferences defaultSharedPreferences;
 
-    WeightAdapter(Cursor cursor) {
+    WeightAdapter(Cursor cursor, SharedPreferences defaultSharedPreferences) {
         this.cursor = cursor;
+        this.defaultSharedPreferences = defaultSharedPreferences;
     }
 
-    WeightAdapter(Cursor cursor, int displayElements) {
+    WeightAdapter(Cursor cursor, int displayElements, SharedPreferences defaultSharedPreferences) {
         this.cursor = cursor;
         this.displayElements = displayElements;
         if (displayElements == PREVIOUS_NO_TODAY) {
             offsetPosition = 1;
         }
+        this.defaultSharedPreferences = defaultSharedPreferences;
     }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         context = recyclerView.getContext();
-        usesFatPc = PreferenceManager
-                .getDefaultSharedPreferences(context)
+        usesFatPc = defaultSharedPreferences
                 .getBoolean(context.getString(R.string.pref_uses_fat_pc_key),
                         context.getResources().getBoolean(R.bool.pref_uses_fat_pc_default));
-        usesBMI = PreferenceManager
-                .getDefaultSharedPreferences(context)
+        usesBMI = defaultSharedPreferences
                 .getBoolean(context.getString(R.string.pref_uses_bmi_key),
                         context.getResources().getBoolean(R.bool.pref_uses_bmi_default));
     }
@@ -90,7 +94,6 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
 
         holder.tvWeight.setText(Units.getWeightTextWithUnits(weight));
 
-
         if(!usesFatPc) {
             holder.tvFatPc.setVisibility(View.GONE);
         } else {
@@ -102,7 +105,7 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
         // we can't use height in float due to SettingsFragment
         // long story short we tried and it didn't work.
         float height = 0f;
-        String heightString = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(R.string.pref_height_key), "");
+        String heightString = defaultSharedPreferences.getString(context.getString(R.string.pref_height_key), "");
 
         try {
             height = Float.parseFloat(heightString);
@@ -120,12 +123,10 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
     }
 
     void notifyColumnsChanged() {
-        usesFatPc = PreferenceManager
-                .getDefaultSharedPreferences(context)
+        usesFatPc = defaultSharedPreferences
                 .getBoolean(context.getString(R.string.pref_uses_fat_pc_key),
                         context.getResources().getBoolean(R.bool.pref_uses_fat_pc_default));
-        usesBMI = PreferenceManager
-                .getDefaultSharedPreferences(context)
+        usesBMI = defaultSharedPreferences
                 .getBoolean(context.getString(R.string.pref_uses_bmi_key),
                         context.getResources().getBoolean(R.bool.pref_uses_bmi_default));
         notifyDataSetChanged();
@@ -166,15 +167,15 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvDate, tvWeight, tvFatPc, tvBMI;
+        @BindView(R.id.tvDate)TextView tvDate;
+        @BindView(R.id.tvWeight)TextView tvWeight;
+        @BindView(R.id.tvFatPc)TextView tvFatPc;
+        @BindView(R.id.tvBMI)TextView tvBMI;
 
         ViewHolder(View itemView) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
 
-            tvDate = itemView.findViewById(R.id.tvDate);
-            tvWeight = itemView.findViewById(R.id.tvWeight);
-            tvFatPc = itemView.findViewById(R.id.tvFatPc);
-            tvBMI = itemView.findViewById(R.id.tvBMI);
         }
 
     }
