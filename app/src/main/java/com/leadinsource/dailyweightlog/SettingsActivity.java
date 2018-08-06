@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.leadinsource.dailyweightlog.app.DWLApplication;
+import com.leadinsource.dailyweightlog.ui.main.MainActivity;
 
 import javax.inject.Inject;
 

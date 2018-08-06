@@ -52,7 +52,7 @@ public class WeightLoader extends AsyncTaskLoader<Cursor> {
 
     @Override
     public void deliverResult(Cursor data) {
-        Log.d(TAG, "delivering result");
+        Log.d(TAG, "delivering result "+data);
         retCursor = data;
         super.deliverResult(data);
     }

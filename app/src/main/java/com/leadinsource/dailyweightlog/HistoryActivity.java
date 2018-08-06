@@ -15,7 +15,7 @@ import com.leadinsource.dailyweightlog.databinding.ActivityHistoryBinding;
 
 import javax.inject.Inject;
 
-public class HistoryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
+public class HistoryActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final int WEIGHT_LOADER_ID = 0;
 
@@ -39,8 +39,6 @@ public class HistoryActivity extends AppCompatActivity implements LoaderManager.
         if(!doesUseBMI()) {
             binding.tvBMIHeader.setVisibility(View.GONE);
         }
-
-        getSupportLoaderManager().initLoader(WEIGHT_LOADER_ID, null, this);
     }
 
     private boolean doesUseFatPc() {
@@ -69,23 +67,6 @@ public class HistoryActivity extends AppCompatActivity implements LoaderManager.
         binding.recyclerView.setAdapter(adapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setHasFixedSize(true);
-    }
-
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
-        return new WeightLoader(this);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        setUpRecyclerView(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        setUpRecyclerView(null);
     }
 
     @Override

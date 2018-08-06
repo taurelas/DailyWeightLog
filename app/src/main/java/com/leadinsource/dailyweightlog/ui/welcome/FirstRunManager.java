@@ -1,4 +1,4 @@
-package com.leadinsource.dailyweightlog;
+package com.leadinsource.dailyweightlog.ui.welcome;
 
 import android.content.SharedPreferences;
 

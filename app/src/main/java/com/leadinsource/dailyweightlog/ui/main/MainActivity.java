@@ -1,16 +1,16 @@
-package com.leadinsource.dailyweightlog;
+package com.leadinsource.dailyweightlog.ui.main;
 
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ShareCompat;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -18,12 +18,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
+import com.leadinsource.dailyweightlog.HistoryActivity;
+import com.leadinsource.dailyweightlog.R;
+import com.leadinsource.dailyweightlog.SettingsActivity;
+import com.leadinsource.dailyweightlog.WeightAdapter;
 import com.leadinsource.dailyweightlog.app.DWLApplication;
 import com.leadinsource.dailyweightlog.databinding.ActivityMainBinding;
 import com.leadinsource.dailyweightlog.db.DataContract;
@@ -31,18 +31,11 @@ import com.leadinsource.dailyweightlog.utils.ReminderUtils;
 import com.leadinsource.dailyweightlog.utils.Units;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 
 import javax.inject.Inject;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-
-    private static final int CHART_LOADER_ID = 0;
-    private static final int PREVIOUS_WEIGHT_LOADER_ID = 1;
-    private static final int TODAY_WEIGHT_LOADER_ID = 2;
-    private static final int CHECK_TODAY_WEIGHT_LOADER_ID = 3;
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Main Activity";
     public static final int SETTINGS_REQUEST_CODE = 15;
@@ -50,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private boolean weightEnteredToday = false;
 
-    private Uri lastInsertedUri;
     private WeightAdapter todayWeightAdapter;
 
     ActivityMainBinding binding;
@@ -59,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Inject
     SharedPreferences defaultSharedPreferences;
 
-    //LineChart chart;
+    private MainActivityViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,28 +61,40 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        binding.layoutPrevious.moreButton.setOnClickListener(new View.OnClickListener() {
+        viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+
+        viewModel.getWeightEntered().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean weightEntered) {
+                if(weightEntered) {
+                    displayWeightAddedUI();
+                } else {
+                    displayWeightInputUI();
+                }
+            }
+        });
+
+        /*binding.previous.moreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
-        binding.todayLayout.btnUndo.setOnClickListener(new View.OnClickListener() {
+      /*  binding.todayLayout.btnUndo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getSupportLoaderManager().destroyLoader(TODAY_WEIGHT_LOADER_ID);
-                getSupportLoaderManager().destroyLoader(CHART_LOADER_ID);
-                getSupportLoaderManager().restartLoader(CHART_LOADER_ID, null, MainActivity.this);
-                deleteWeight();
+                Toast.makeText(MainActivity.this, "Undo!", Toast.LENGTH_SHORT).show();
+                viewModel.undo();
                 displayWeightInputUI();
             }
-        });
+        });*/
 
-        binding.todayLayout.btnShare.setOnClickListener(new View.OnClickListener() {
+      /*  binding.todayLayout.btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Share!", Toast.LENGTH_SHORT).show();
                 String mimeType = "text/plain";
                 String title = "Share your today's weight";
                 float weight;
@@ -115,13 +119,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         .startChooser();
 
             }
-        });
-
-        getSupportLoaderManager().initLoader(CHART_LOADER_ID, null, this);
-
-        // check if last entered weight was today
-        getSupportLoaderManager().initLoader(CHECK_TODAY_WEIGHT_LOADER_ID, null, this);
-
+        });*/
     }
 
     @Override
@@ -186,28 +184,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         }
 
-        // add numbers to db using loader
+        viewModel.addData(weight, fatPc);
 
-        ContentValues values = new ContentValues();
 
-        values.put(DataContract.WeightEntry.COLUMN_WEIGHT_IN_KG, weight);
-        values.put(DataContract.WeightEntry.COLUMN_FAT_PC, fatPc);
-
-        Uri uri = getContentResolver().insert(DataContract.WeightEntry.CONTENT_URI, values);
-        if (uri != null) {
-            lastInsertedUri = uri;
-        }
-
-        getSupportLoaderManager().restartLoader(CHART_LOADER_ID, null, this);
-        displayWeightAddedUI();
-        ReminderUtils.scheduleWeightReminder(this);
     }
 
     private void displayWeightAddedUI() {
         binding.inputLayout.getRoot().setVisibility(View.INVISIBLE);
         binding.inputNoFat.getRoot().setVisibility(View.INVISIBLE);
         binding.todayLayout.getRoot().setVisibility(View.VISIBLE);
-        getSupportLoaderManager().initLoader(TODAY_WEIGHT_LOADER_ID, null, this);
+
+        // we put this here because only when stuff is added we need to schedule another one
+        ReminderUtils.scheduleWeightReminder(this);
     }
 
     private void displayWeightInputUI() {
@@ -223,6 +211,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             binding.inputNoFat.getRoot().setVisibility(View.VISIBLE);
         }
 
+        //TODO unschedule any reminders
+
+
     }
 
     private boolean doesUseFatPc() {
@@ -235,40 +226,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return defaultSharedPreferences
                 .getBoolean(getString(R.string.pref_uses_bmi_key),
                         getResources().getBoolean(R.bool.pref_uses_bmi_default));
-    }
-
-    void deleteWeight() {
-        getContentResolver().delete(lastInsertedUri, null, null);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new WeightLoader(this);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        int loaderId = loader.getId();
-
-        if (loaderId == CHART_LOADER_ID) {
-            if (data.getCount() > 0) {
-                setUpChart(data);
-            }
-            return;
-        }
-
-        if (loaderId == CHECK_TODAY_WEIGHT_LOADER_ID) {
-            weightEnteredToday = weightEnteredToday(data);
-            showAppropriateUI(weightEnteredToday, data);
-            return;
-        }
-
-        if (loaderId == PREVIOUS_WEIGHT_LOADER_ID) {
-            setUpPreviousWeights(data);
-        } else {
-            setUpTodayWeights(data);
-        }
-
     }
 
     /**
@@ -296,21 +253,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
-
-    private void showAppropriateUI(boolean weightEnteredToday, Cursor data) {
-        if (weightEnteredToday) {
-            data.moveToFirst();
-            long id = data.getLong(data.getColumnIndex(DataContract.WeightEntry._ID));
-            lastInsertedUri = DataContract.WeightEntry.CONTENT_URI.buildUpon().appendPath("" + id).build();
-            getSupportLoaderManager().initLoader(PREVIOUS_WEIGHT_LOADER_ID, null, this);
-            displayWeightAddedUI();
-        } else {
-            getSupportLoaderManager().initLoader(PREVIOUS_WEIGHT_LOADER_ID, null, this);
-            displayWeightInputUI();
-        }
-    }
-
-
     private void setUpTodayWeights(Cursor data) {
         if (todayWeightAdapter == null) {
             todayWeightAdapter = new WeightAdapter(data, 1, defaultSharedPreferences);
@@ -337,47 +279,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         binding.layoutPrevious.rvPrevious.setHasFixedSize(true);
     }
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        //setUpPreviousWeights(null);
-    }
-
-    private void setUpChart(Cursor data) {
-
-        ArrayList<Entry> entries = new ArrayList<>();
-
-        data.moveToFirst();
-        while (!data.isAfterLast()) {
-            long id = data.getLong(data.getColumnIndex(DataContract.WeightEntry._ID));
-            float weight = data.getFloat(data.getColumnIndex(DataContract.WeightEntry.COLUMN_WEIGHT_IN_KG));
-            //Log.d("Chart", "adding " + id + " / " + weight);
-            entries.add(new Entry(id, weight));
-            data.moveToNext();
-        }
-
-        Collections.reverse(entries);
-        LineDataSet dataSet = new LineDataSet(entries, "Weight in time");
-        dataSet.setColor(getResources().getColor(R.color.colorAccent));
-        LineData lineData = new LineData(dataSet);
-
-        binding.chart.setData(lineData);
-        binding.chart.setDrawGridBackground(false);
-        binding.chart.setDescription(null);
-        YAxis yAxis = binding.chart.getAxisRight();
-        yAxis.setEnabled(false);
-        XAxis xAxis = binding.chart.getXAxis();
-        xAxis.setEnabled(false);
-        binding.chart.invalidate();
-    }
-
-    @Override
+   @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SETTINGS_REQUEST_CODE) {
             boolean changed = data.getBooleanExtra(PREFERENCES_CHANGED, false);
             if (changed) {
                 // this is a fallout from using PreferenceFragment in SettingsActivityas we can't
                 // custimise it to cater for this scenario
-                if(doesUseBMI() && isHeightEmpty()) {
+                if (doesUseBMI() && isHeightEmpty()) {
                     setNoBMI();
                 }
                 if (todayWeightAdapter != null) {
@@ -395,7 +304,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
-
     /**
      * We manually switch the BMI off as no height.
      */
@@ -409,10 +317,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private boolean isHeightEmpty() {
-            return defaultSharedPreferences
-                    .getString(getString(R.string.pref_height_key),
-                            getString(R.string.pref_height_value_default))
-                    .isEmpty();
+        return defaultSharedPreferences
+                .getString(getString(R.string.pref_height_key),
+                        getString(R.string.pref_height_value_default))
+                .isEmpty();
 
     }
 }

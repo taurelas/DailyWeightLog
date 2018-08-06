@@ -13,7 +13,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
-import com.leadinsource.dailyweightlog.MainActivity;
+import com.leadinsource.dailyweightlog.ui.main.MainActivity;
 import com.leadinsource.dailyweightlog.R;
 import com.leadinsource.dailyweightlog.WeightReminderIntentService;
 

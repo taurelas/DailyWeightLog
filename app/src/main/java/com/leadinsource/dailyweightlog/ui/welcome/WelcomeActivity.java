@@ -1,4 +1,4 @@
-package com.leadinsource.dailyweightlog;
+package com.leadinsource.dailyweightlog.ui.welcome;
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +26,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.leadinsource.dailyweightlog.ui.main.MainActivity;
+import com.leadinsource.dailyweightlog.R;
 import com.leadinsource.dailyweightlog.app.DWLApplication;
 
 import javax.inject.Inject;

@@ -28,8 +28,8 @@ import butterknife.ButterKnife;
 public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder> implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final int TODAY = 1;
-    static final int PREVIOUS = 3;
-    static final int PREVIOUS_NO_TODAY = 2;
+    public static final int PREVIOUS = 3;
+    public static final int PREVIOUS_NO_TODAY = 2;
     private static final String TAG = "WeightAdapter";
 
     private Cursor cursor;
@@ -40,12 +40,12 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
     private boolean usesBMI;
     private SharedPreferences defaultSharedPreferences;
 
-    WeightAdapter(Cursor cursor, SharedPreferences defaultSharedPreferences) {
+    public WeightAdapter(Cursor cursor, SharedPreferences defaultSharedPreferences) {
         this.cursor = cursor;
         this.defaultSharedPreferences = defaultSharedPreferences;
     }
 
-    WeightAdapter(Cursor cursor, int displayElements, SharedPreferences defaultSharedPreferences) {
+    public WeightAdapter(Cursor cursor, int displayElements, SharedPreferences defaultSharedPreferences) {
         this.cursor = cursor;
         this.displayElements = displayElements;
         if (displayElements == PREVIOUS_NO_TODAY) {
@@ -122,7 +122,7 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
 
     }
 
-    void notifyColumnsChanged() {
+    public void notifyColumnsChanged() {
         usesFatPc = defaultSharedPreferences
                 .getBoolean(context.getString(R.string.pref_uses_fat_pc_key),
                         context.getResources().getBoolean(R.bool.pref_uses_fat_pc_default));
@@ -146,7 +146,7 @@ public class WeightAdapter extends RecyclerView.Adapter<WeightAdapter.ViewHolder
         return cursor.getCount();
     }
 
-    void updateData(Cursor cursor) {
+    public void updateData(Cursor cursor) {
         this.cursor = cursor;
     }
 
