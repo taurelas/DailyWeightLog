@@ -11,20 +11,22 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
-import com.leadinsource.dailyweightlog.*
+import com.leadinsource.dailyweightlog.R
+import com.leadinsource.dailyweightlog.SettingsActivity
+import com.leadinsource.dailyweightlog.WeightAdapter
 import com.leadinsource.dailyweightlog.app.DWLApplication
 import com.leadinsource.dailyweightlog.databinding.ActivityMainBinding
 import com.leadinsource.dailyweightlog.utils.ReminderUtils
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+const val SETTINGS_REQUEST_CODE = 15
+const val PREFERENCES_CHANGED = "changed_prefs"
 
-    private val weightEnteredToday = false
+class MainActivity : AppCompatActivity() {
 
     private var todayWeightAdapter: WeightAdapter? = null
 
@@ -33,10 +35,10 @@ class MainActivity : AppCompatActivity() {
 
     private var previousWeightAdapter: WeightAdapter? = null
 
-    @Inject
+    @Inject //dependency injection with Dagger2
     lateinit var defaultSharedPreferences: SharedPreferences
 
-    private var viewModel: MainActivityViewModel? = null
+    lateinit var viewModel: MainActivityViewModel
 
     private val isHeightEmpty: Boolean
         get() = defaultSharedPreferences
@@ -53,7 +55,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
 
-        viewModel!!.weightEntered.observe(this, Observer { weightEntered ->
+        viewModel.weightEntered.observe(this, Observer { weightEntered ->
             if (weightEntered!!) {
                 displayWeightAddedUI()
             } else {
@@ -129,7 +131,7 @@ class MainActivity : AppCompatActivity() {
 
         }*/
 
-        viewModel!!.addData(weight, fatPc)
+        viewModel.addData(weight, fatPc)
     }
 
     private fun displayWeightAddedUI() {
@@ -184,33 +186,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setUpPreviousWeights(data: Cursor) {
-
-        if (weightEnteredToday) {
-            previousWeightAdapter = WeightAdapter(data, PREVIOUS_NO_TODAY, defaultSharedPreferences)
-        } else {
-            previousWeightAdapter = WeightAdapter(data, PREVIOUS, defaultSharedPreferences)
-        }
-
-        binding.layoutPrevious?.rvPrevious?.adapter = previousWeightAdapter
-        binding.layoutPrevious?.rvPrevious?.layoutManager = LinearLayoutManager(this)
-        binding.layoutPrevious?.rvPrevious?.setHasFixedSize(true)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         if (requestCode == SETTINGS_REQUEST_CODE) {
             val changed = data.getBooleanExtra(PREFERENCES_CHANGED, false)
             if (changed) {
-                // this is a fallout from using PreferenceFragment in SettingsActivityas we can't
-                // custimise it to cater for this scenario
+                // this is a fallout from using PreferenceFragment in SettingsActivity as we can't
+                // customise it to cater for this scenario
                 if (doesUseBMI() && isHeightEmpty) {
                     setNoBMI()
                 }
                 if (todayWeightAdapter != null) {
-                    Log.d(TAG, "todayWeightAdapter is not null")
                     todayWeightAdapter!!.notifyColumnsChanged()
                 } else {
-                    Log.d(TAG, "todayWeightAdapter is null")
+
                 }
                 previousWeightAdapter!!.notifyColumnsChanged()
                 if (binding.inputLayout?.root?.visibility == View.VISIBLE || binding.inputNoFat?.root?.visibility == View.VISIBLE) {
@@ -230,12 +218,5 @@ class MainActivity : AppCompatActivity() {
                 .edit()
                 .putBoolean(getString(R.string.pref_uses_bmi_key), false)
                 .commit()
-    }
-
-    companion object {
-
-        private const val TAG = "Main Activity"
-        const val SETTINGS_REQUEST_CODE = 15
-        const val PREFERENCES_CHANGED = "changed_prefs"
     }
 }
