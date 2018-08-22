@@ -1,0 +1,20 @@
+<layout>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    class="com.leadinsource.dailyweightlog.ui.main.ChartFragment"
+    tools:context="com.leadinsource.dailyweightlog.ui.main.ChartFragment">
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
+        android:contentDescription="@string/chart"
+        android:layout_width="match_parent"
+        android:layout_height="323dp"
+        android:layout_marginBottom="8dp"
+        >
+
+    </com.github.mikephil.charting.charts.LineChart>
+
+</FrameLayout>
+</layout>

@@ -1,69 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/activity_margin"
-        android:layout_marginStart="@dimen/activity_margin"
-        tools:context="com.leadinsource.dailyweightlog.MainActivity"
-        tools:layout_editor_absoluteY="81dp">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/chart"
-            android:contentDescription="@string/chart"
-            android:layout_width="match_parent"
-            android:layout_height="323dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline">
-
-        </com.github.mikephil.charting.charts.LineChart>
-
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.5" />
-
-        <FrameLayout
-            android:id="@+id/frame"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/chart">
 
-            <include
-                android:id="@+id/inputLayout"
-                layout="@layout/activity_main_input"
-                android:visibility="visible" />
+            tools:context="com.leadinsource.dailyweightlog.ui.main.MainActivity"
+            tools:layout_editor_absoluteY="81dp">
 
-            <include
-                android:id="@+id/inputNoFat"
-                layout="@layout/activity_main_input_no_fat_pc"
-                android:visibility="gone" />
+            <fragment
+                android:id="@+id/chart"
+                android:name="com.leadinsource.dailyweightlog.ui.main.ChartFragment"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/guideline"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout="@layout/fragment_chart" />
 
-            <include
-                android:id="@+id/todayLayout"
-                layout="@layout/activity_main_today"
-                android:visibility="gone" />
-        </FrameLayout>
-
-        <include
-            android:id="@+id/layout_previous"
-            layout="@layout/activity_main_previous"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/frame" />
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.33" />
 
 
-    </android.support.constraint.ConstraintLayout>
-</ScrollView>
+            <fragment
+                android:id="@+id/input"
+                android:name="com.leadinsource.dailyweightlog.ui.main.InputFragment"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/previous"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/guideline"
+                tools:layout="@layout/fragment_input" />
+
+            <fragment
+                android:id="@+id/previous"
+                android:name="com.leadinsource.dailyweightlog.ui.main.PreviousFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout="@layout/fragment_previous" />
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
 </layout>

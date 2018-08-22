@@ -14,19 +14,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main.MainActivity"
             android:launchMode="singleTop">
 
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".ui.main.MainActivity" />
         <activity android:name=".HistoryActivity" />
-
-        <provider
-            android:name=".db.WeightContentProvider"
-            android:authorities="com.leadinsource.dailyweightlog"
-            android:exported="false" />
 
         <service
             android:name=".WeightReminderIntentService"
@@ -39,7 +34,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".WelcomeActivity">
+        <activity android:name=".ui.welcome.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

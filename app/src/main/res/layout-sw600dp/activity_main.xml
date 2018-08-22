@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/activity_margin"
         android:layout_marginStart="@dimen/activity_margin"
-        tools:context="com.leadinsource.dailyweightlog.MainActivity"
+        tools:context="com.leadinsource.dailyweightlog.ui.main.MainActivity"
         tools:layout_editor_absoluteY="81dp">
 
         <com.github.mikephil.charting.charts.LineChart
