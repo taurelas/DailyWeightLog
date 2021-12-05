@@ -1,7 +1,7 @@
 package com.leadinsource.dailyweightlog.utils
 
-import android.content.Context
-import android.support.v4.util.TimeUtils
+/*import android.content.Context
+import androidx.core.util.TimeUtils
 
 import com.firebase.jobdispatcher.Constraint
 import com.firebase.jobdispatcher.Driver
@@ -14,9 +14,9 @@ import com.firebase.jobdispatcher.Trigger
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
-/**
+*//**
  * Created by Matt on 05/02/2018.
- */
+ *//*
 private const val REMINDER_JOB_TAG = "weight_reminder_tag"
 
 object ReminderUtils {
@@ -53,4 +53,4 @@ object ReminderUtils {
         dispatcher.schedule(constraintReminderJob)
         initialized = true
     }
-}
+}*/

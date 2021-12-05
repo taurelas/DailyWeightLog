@@ -3,19 +3,13 @@ package com.leadinsource.dailyweightlog
 import android.content.Context
 import android.content.SharedPreferences
 import android.database.Cursor
-import android.support.v7.widget.RecyclerView
-import android.text.format.DateFormat
-import android.util.Log
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
-import butterknife.BindView
-import butterknife.ButterKnife
+import com.leadinsource.dailyweightlog.databinding.HistoryListItemBinding
+import com.leadinsource.dailyweightlog.databinding.HistoryListItemBinding.inflate
 import com.leadinsource.dailyweightlog.db.COLUMN_DATE
-import com.leadinsource.dailyweightlog.db.COLUMN_FAT_PC
-import com.leadinsource.dailyweightlog.db.COLUMN_WEIGHT_IN_KG
 import com.leadinsource.dailyweightlog.utils.Units
 import java.sql.Timestamp
 
@@ -27,73 +21,57 @@ const val PREVIOUS = 3
 const val PREVIOUS_NO_TODAY = 2
 private const val TAG = "WeightAdapter"
 
-internal class WeightAdapter : RecyclerView.Adapter<WeightAdapter.ViewHolder>, SharedPreferences.OnSharedPreferenceChangeListener {
+data class Data(val date: String, val weight: Float, val fatPc: Float)
+
+internal class WeightAdapter(private val dataSet: Array<Data>, private val usesBMI: Boolean, private val usesFatPc: Boolean, private val displayElements: Int = 0) : RecyclerView.Adapter<WeightAdapter.ViewHolder>() {
 
     private var cursor: Cursor? = null
-    private var displayElements = 0
     private var offsetPosition = 0
     private var context: Context? = null
-    private var usesFatPc: Boolean = false
-    private var usesBMI: Boolean = false
     private var defaultSharedPreferences: SharedPreferences? = null
 
-    constructor(cursor: Cursor, defaultSharedPreferences: SharedPreferences) {
-        this.cursor = cursor
-        this.defaultSharedPreferences = defaultSharedPreferences
-    }
-
-    constructor(cursor: Cursor, displayElements: Int, defaultSharedPreferences: SharedPreferences) {
-        this.cursor = cursor
-        this.displayElements = displayElements
+    init {
         if (displayElements == PREVIOUS_NO_TODAY) {
             offsetPosition = 1
         }
-        this.defaultSharedPreferences = defaultSharedPreferences
-    }
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        context = recyclerView.context
-        usesFatPc = defaultSharedPreferences!!
-                .getBoolean(context!!.getString(R.string.pref_uses_fat_pc_key),
-                        context!!.resources.getBoolean(R.bool.pref_uses_fat_pc_default))
-        usesBMI = defaultSharedPreferences!!
-                .getBoolean(context!!.getString(R.string.pref_uses_bmi_key),
-                        context!!.resources.getBoolean(R.bool.pref_uses_bmi_default))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.history_list_item, parent, false)
-        return ViewHolder(view)
+
+        val binding = inflate(inflater, parent, false)
+
+        return ViewHolder(binding)
     }
 
+    inner class ViewHolder(val binding: HistoryListItemBinding) : RecyclerView.ViewHolder(binding.root)
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        context = recyclerView.context
+
+    }
+
+
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
-        Log.d(TAG, "Binding position $position")
-
         val dataPosition = position + offsetPosition
-
-        // moving the cursor to the position, but return if it can't go there
-        if (!cursor!!.moveToPosition(dataPosition)) {
-            return
-        }
 
         val date = cursor!!.getString(cursor!!.getColumnIndex(COLUMN_DATE))
         val timestamp = Timestamp.valueOf(date)
 
-        holder.tvDate.text = DateFormat.getDateFormat(holder.tvDate.context).format(timestamp)
+        holder.binding.tvDate.text = dataSet[position].date
 
-        val weight = cursor!!.getFloat(cursor!!.getColumnIndex(COLUMN_WEIGHT_IN_KG))
+        val weight = dataSet[position].weight
 
-        holder.tvWeight.text = Units.getWeightTextWithUnits(weight)
+        holder.binding.tvWeight.text = Units.getWeightTextWithUnits(weight)
 
         if (!usesFatPc) {
-            holder.tvFatPc.visibility = View.GONE
+            holder.binding.tvFatPc.visibility = View.GONE
         } else {
-            val fatPc = cursor!!.getFloat(cursor!!.getColumnIndex(COLUMN_FAT_PC))
-            holder.tvFatPc.text = Units.getFatPcString(fatPc)
-            holder.tvFatPc.visibility = View.VISIBLE
+            val fatPc = dataSet[position].fatPc
+            holder.binding.tvFatPc.text = Units.getFatPcString(fatPc)
+            holder.binding.tvFatPc.visibility = View.VISIBLE
         }
 
         // we can't use height in float due to SettingsFragment
@@ -108,21 +86,15 @@ internal class WeightAdapter : RecyclerView.Adapter<WeightAdapter.ViewHolder>, S
         }
 
         if (!usesBMI) {
-            holder.tvBMI.visibility = View.GONE
+            holder.binding.tvBMI.visibility = View.GONE
         } else {
-            holder.tvBMI.visibility = View.VISIBLE
-            holder.tvBMI.text = Units.getMetricBMIString(height, weight)
+            holder.binding.tvBMI.visibility = View.VISIBLE
+            holder.binding.tvBMI.text = Units.getMetricBMIString(height, weight)
         }
 
     }
 
     fun notifyColumnsChanged() {
-        usesFatPc = defaultSharedPreferences!!
-                .getBoolean(context!!.getString(R.string.pref_uses_fat_pc_key),
-                        context!!.resources.getBoolean(R.bool.pref_uses_fat_pc_default))
-        usesBMI = defaultSharedPreferences!!
-                .getBoolean(context!!.getString(R.string.pref_uses_bmi_key),
-                        context!!.resources.getBoolean(R.bool.pref_uses_bmi_default))
         notifyDataSetChanged()
     }
 
@@ -134,7 +106,7 @@ internal class WeightAdapter : RecyclerView.Adapter<WeightAdapter.ViewHolder>, S
             } else {
                 displayElements
             }
-        } else cursor!!.count
+        } else dataSet.size
 
     }
 
@@ -142,35 +114,4 @@ internal class WeightAdapter : RecyclerView.Adapter<WeightAdapter.ViewHolder>, S
         this.cursor = cursor
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        Toast.makeText(context, "Changed!", Toast.LENGTH_SHORT).show()
-        if (key == context!!.getString(R.string.pref_uses_fat_pc_key)) {
-            usesFatPc = sharedPreferences.getBoolean(key,
-                    context!!.resources.getBoolean(R.bool.pref_uses_fat_pc_default))
-        }
-        if (key == context!!.getString(R.string.pref_uses_bmi_key)) {
-            usesBMI = sharedPreferences.getBoolean(key,
-                    context!!.resources.getBoolean(R.bool.pref_uses_bmi_default))
-        }
-
-        notifyDataSetChanged()
-    }
-
-    internal inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        @BindView(R.id.tvDate)
-        lateinit var tvDate: TextView
-        @BindView(R.id.tvWeight)
-        lateinit var tvWeight: TextView
-        @BindView(R.id.tvFatPc)
-        lateinit var tvFatPc: TextView
-        @BindView(R.id.tvBMI)
-        lateinit var tvBMI: TextView
-
-        init {
-            ButterKnife.bind(this, itemView)
-
-        }
-
-    }
 }

@@ -3,7 +3,7 @@ package com.leadinsource.dailyweightlog.di
 import com.leadinsource.dailyweightlog.HistoryActivity
 import com.leadinsource.dailyweightlog.ui.main.MainActivity
 import com.leadinsource.dailyweightlog.SettingsActivity
-import com.leadinsource.dailyweightlog.SettingsFragment
+//import com.leadinsource.dailyweightlog.SettingsFragment
 import com.leadinsource.dailyweightlog.ui.welcome.WelcomeActivity
 
 import javax.inject.Singleton
@@ -21,5 +21,5 @@ interface AppComponent {
     fun inject(mainActivity: MainActivity)
     fun inject(historyActivity: HistoryActivity)
     fun inject(settingsActivity: SettingsActivity)
-    fun inject(settingsFragment: SettingsFragment)
+   // fun inject(settingsFragment: SettingsFragment)
 }

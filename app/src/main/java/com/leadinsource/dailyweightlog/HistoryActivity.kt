@@ -2,12 +2,12 @@ package com.leadinsource.dailyweightlog
 
 import android.content.SharedPreferences
 import android.database.Cursor
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.LoaderManager
-import android.support.v4.content.Loader
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.Loader
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 
 import com.leadinsource.dailyweightlog.app.DWLApplication
@@ -51,10 +51,19 @@ class HistoryActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenc
     }
 
     internal fun setUpRecyclerView(cursor: Cursor) {
-        adapter = WeightAdapter(cursor, defaultSharedPreferences)
+        val usesFatPc = defaultSharedPreferences!!
+            .getBoolean(getString(R.string.pref_uses_fat_pc_key),
+                resources.getBoolean(R.bool.pref_uses_fat_pc_default))
+        val usesBMI = defaultSharedPreferences!!
+            .getBoolean(getString(R.string.pref_uses_bmi_key),
+                resources.getBoolean(R.bool.pref_uses_bmi_default))
 
+
+        adapter = WeightAdapter(
+            emptyArray<Data>(), usesBMI, usesFatPc)
         binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.layoutManager =
+            LinearLayoutManager(this)
         binding.recyclerView.setHasFixedSize(true)
     }
 

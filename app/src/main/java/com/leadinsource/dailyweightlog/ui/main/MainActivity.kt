@@ -1,15 +1,15 @@
 package com.leadinsource.dailyweightlog.ui.main
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.SharedPreferences
 import android.database.Cursor
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
@@ -19,7 +19,7 @@ import android.widget.EditText
 import com.leadinsource.dailyweightlog.*
 import com.leadinsource.dailyweightlog.app.DWLApplication
 import com.leadinsource.dailyweightlog.databinding.ActivityMainBinding
-import com.leadinsource.dailyweightlog.utils.ReminderUtils
+//import com.leadinsource.dailyweightlog.utils.ReminderUtils
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity() {
         binding.todayLayout?.root?.visibility = View.VISIBLE
 
         // we put this here because only when stuff is added we need to schedule another one
-        ReminderUtils.scheduleWeightReminder(this)
+       // ReminderUtils.scheduleWeightReminder(this)
     }
 
     private fun displayWeightInputUI() {
@@ -173,9 +173,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpTodayWeights(data: Cursor) {
         if (todayWeightAdapter == null) {
-            todayWeightAdapter = WeightAdapter(data, 1, defaultSharedPreferences)
+           // todayWeightAdapter = WeightAdapter(data, 1, defaultSharedPreferences)
             binding.todayLayout?.rvToday?.adapter = todayWeightAdapter
-            binding.todayLayout?.rvToday?.layoutManager = LinearLayoutManager(this)
+            binding.todayLayout?.rvToday?.layoutManager =
+                LinearLayoutManager(this)
             binding.todayLayout?.rvToday?.setHasFixedSize(true)
         } else {
             binding.todayLayout?.rvToday?.adapter = todayWeightAdapter
@@ -187,17 +188,19 @@ class MainActivity : AppCompatActivity() {
     private fun setUpPreviousWeights(data: Cursor) {
 
         if (weightEnteredToday) {
-            previousWeightAdapter = WeightAdapter(data, PREVIOUS_NO_TODAY, defaultSharedPreferences)
+           // previousWeightAdapter = WeightAdapter(data, PREVIOUS_NO_TODAY, defaultSharedPreferences)
         } else {
-            previousWeightAdapter = WeightAdapter(data, PREVIOUS, defaultSharedPreferences)
+         //   previousWeightAdapter = WeightAdapter(data, PREVIOUS, defaultSharedPreferences)
         }
 
         binding.layoutPrevious?.rvPrevious?.adapter = previousWeightAdapter
-        binding.layoutPrevious?.rvPrevious?.layoutManager = LinearLayoutManager(this)
+        binding.layoutPrevious?.rvPrevious?.layoutManager =
+            LinearLayoutManager(this)
         binding.layoutPrevious?.rvPrevious?.setHasFixedSize(true)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+ /*   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SETTINGS_REQUEST_CODE) {
             val changed = data.getBooleanExtra(PREFERENCES_CHANGED, false)
             if (changed) {
@@ -218,7 +221,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
+    }*/
 
     /**
      * We manually switch the BMI off as no height.

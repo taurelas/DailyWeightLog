@@ -1,6 +1,6 @@
 package com.leadinsource.dailyweightlog.ui.main
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import android.database.Cursor
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
