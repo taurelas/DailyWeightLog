@@ -6,40 +6,31 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.Html
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
-import butterknife.*
 import com.leadinsource.dailyweightlog.R
 import com.leadinsource.dailyweightlog.app.DWLApplication
+import com.leadinsource.dailyweightlog.databinding.ActivityWelcomeBinding
 import com.leadinsource.dailyweightlog.ui.main.MainActivity
 import javax.inject.Inject
 
 class WelcomeActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityWelcomeBinding
+
     //injecting shared preferences singleton
     var defaultSharedPreferences: SharedPreferences? = null
         @Inject set
-
-    @BindView(R.id.view_pager)
-    lateinit var viewPager: ViewPager
-
-    @BindView(R.id.layoutDots)
-    lateinit var dotsLayout: LinearLayout
-
-    @BindView(R.id.btn_next)
-    lateinit var btnNext: Button
-
-    @BindString(R.string.enter_valid_height)
-    lateinit var errorText: String
 
     private lateinit var dots: Array<TextView?>
     private lateinit var layouts: IntArray
@@ -48,11 +39,6 @@ class WelcomeActivity : AppCompatActivity() {
     private var heightRequired = true
     internal var height: Float = 0.toFloat()
     internal var heightString = ""
-
-    @BindArray(R.array.array_dot_active)
-    lateinit var colorsActive: IntArray
-    @BindArray(R.array.array_dot_inactive)
-    lateinit var colorsInactive: IntArray
 
     //  viewpager change listener
     private val viewPagerPageChangeListener: ViewPager.OnPageChangeListener = object : ViewPager.OnPageChangeListener {
@@ -63,11 +49,14 @@ class WelcomeActivity : AppCompatActivity() {
             // changing the next button text 'NEXT' / 'GOT IT'
             if (position == layouts.size - 1) {
                 // last page. make button text to GOT IT
-                btnNext.text = getString(R.string.start)
+                binding.btnNext.text = getString(R.string.start)
+                binding.btnNext.visibility = View.GONE
+                binding.btnComplete.visibility = View.VISIBLE
                 //btnSkip.setVisibility(View.GONE);
             } else {
                 // still pages are left
-                btnNext.text = getString(R.string.next)
+                binding.btnNext.visibility = View.VISIBLE
+                binding.btnComplete.visibility = View.GONE
                 //btnSkip.setVisibility(View.VISIBLE);
             }
 
@@ -99,7 +88,7 @@ class WelcomeActivity : AppCompatActivity() {
                         height = java.lang.Float.parseFloat(s.toString())
                         saveSetting(getString(R.string.pref_height_key), heightString)
                     } catch (nfe: NumberFormatException) {
-                        etHeight.error = errorText
+                        etHeight.error = resources.getString(R.string.enter_valid_height)
                     }
                 }
             })
@@ -113,6 +102,7 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         DWLApplication.app().appComponent().inject(this)
         // Checking for first time launch - before calling setContentView()
+
         firstRunManager = FirstRunManager(defaultSharedPreferences!!)
         if (!firstRunManager.isFirstTimeLaunch) {
             launchHomeScreen()
@@ -125,9 +115,9 @@ class WelcomeActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= 21) {
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         }
-
-        setContentView(R.layout.activity_welcome)
-        ButterKnife.bind(this)
+        binding = ActivityWelcomeBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         // layouts of all welcome sliders
         // add few more layouts if you want
@@ -139,11 +129,29 @@ class WelcomeActivity : AppCompatActivity() {
         // making notification bar transparent
         changeStatusBarColor()
 
-        viewPager.adapter = MyViewPagerAdapter()
-        viewPager.addOnPageChangeListener(viewPagerPageChangeListener)
+
+        binding.viewPager.adapter = MyViewPagerAdapter()
+        binding.viewPager.addOnPageChangeListener(viewPagerPageChangeListener)
+
+        binding.btnNext.setOnClickListener {
+            val current = getItem(+1)
+            binding.viewPager.currentItem = current
+        }
+
+        binding.btnComplete.setOnClickListener {
+            // binding to check if editText is available
+            val editText = findViewById<EditText>(R.id.etHeight)
+
+            if (editText.text.toString().isEmpty() && heightRequired) {
+                editText.requestFocus()
+                editText.error = resources.getString(R.string.enter_valid_height)
+            } else {
+                launchHomeScreen()
+            }
+        }
+
     }
 
-    @OnClick(R.id.btn_next)
     fun onClick() {
 
         // binding to check if editText is available
@@ -154,12 +162,12 @@ class WelcomeActivity : AppCompatActivity() {
         val current = getItem(+1)
         if (current < layouts.size) {
             // move to next screen
-            viewPager.currentItem = current
+            binding.viewPager.currentItem = current
         } else {
             if (editText != null) {
                 if (editText.text.toString().isEmpty() && heightRequired) {
                     editText.requestFocus()
-                    editText.error = errorText
+                    editText.error = resources.getString(R.string.enter_valid_height)
                 } else {
                     launchHomeScreen()
                 }
@@ -195,24 +203,25 @@ class WelcomeActivity : AppCompatActivity() {
         //int[] colorsActive = getResources().getIntArray(R.array.array_dot_active);
         //int[] colorsInactive = getResources().getIntArray(R.array.array_dot_inactive);
 
-        dotsLayout.removeAllViews()
+        binding.layoutDots.removeAllViews()
         for (i in dots.indices) {
             dots[i] = TextView(this)
             dots[i]?.text = Html.fromHtml("&#8226;")
             dots[i]?.textSize = 35f
-            dots[i]?.setTextColor(colorsInactive[currentPage])
-            dotsLayout.addView(dots[i])
+            dots[i]?.setTextColor(resources.getIntArray(R.array.array_dot_inactive)[currentPage])
+            binding.layoutDots.addView(dots[i])
         }
 
         if (dots.isNotEmpty())
-            dots[currentPage]?.setTextColor(colorsActive[currentPage])
+            dots[currentPage]?.setTextColor(resources.getIntArray(R.array.array_dot_active)[currentPage])
     }
 
     private fun getItem(i: Int): Int {
-        return viewPager.currentItem + i
+        return binding.viewPager.currentItem + i
     }
 
     private fun launchHomeScreen() {
+        Log.d("XCHK", "launchHomeScreen")
         firstRunManager.setFirstTimeLaunched()
         startActivity(Intent(this@WelcomeActivity, MainActivity::class.java))
         finish()

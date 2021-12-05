@@ -1,16 +1,20 @@
 package com.leadinsource.dailyweightlog.utils
-
+/*
 import com.firebase.jobdispatcher.JobParameters
 import com.firebase.jobdispatcher.JobService
 import kotlinx.coroutines.experimental.launch
 
+*/
 /**
  * Created by Matt on 05/02/2018.
- */
+ *//*
+
 
 class ReminderJobService : JobService() {
 
-/** called by the system when it is time for your job to execute*/
+*/
+/** called by the system when it is time for your job to execute*//*
+
     override fun onStartJob(job: JobParameters): Boolean {
         launch {
             backgroundTask()
@@ -33,3 +37,4 @@ class ReminderJobService : JobService() {
         return true
     }
 }
+*/

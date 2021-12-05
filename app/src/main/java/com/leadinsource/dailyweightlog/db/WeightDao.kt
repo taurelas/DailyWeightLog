@@ -1,8 +1,8 @@
 package com.leadinsource.dailyweightlog.db
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Query
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Query
 import android.database.Cursor
 
 /**
@@ -11,10 +11,12 @@ import android.database.Cursor
 
 @Dao
 interface WeightDao {
-    @get:Query("SELECT * FROM $TABLE_NAME ORDER BY $COLUMN_DATE")
-    val all: Cursor
+
+/*
+
+    @Query("SELECT * FROM $TABLE_NAME ORDER BY $COLUMN_DATE")
+    fun getAll(): List<Weight>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE $_ID = :weightId")
-    fun getSingleWeight(weightId: Int): LiveData<Weight>
-
+    fun getSingleWeight(weightId: Int): List<Weight>*/
 }

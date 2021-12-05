@@ -1,6 +1,8 @@
 package com.leadinsource.dailyweightlog.app
 
 import android.app.Application
+import androidx.room.Room
+import com.leadinsource.dailyweightlog.db.WeightDatabase
 
 import com.leadinsource.dailyweightlog.di.AppComponent
 import com.leadinsource.dailyweightlog.di.AppModule
@@ -18,6 +20,11 @@ class DWLApplication : Application() {
         super.onCreate()
 
         app = this
+
+        Room.databaseBuilder(
+            applicationContext,
+            WeightDatabase::class.java, "weights"
+        )
 
     }
 

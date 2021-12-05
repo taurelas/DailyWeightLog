@@ -1,27 +1,28 @@
-package com.leadinsource.dailyweightlog
+/* package com.leadinsource.dailyweightlog
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.v7.preference.CheckBoxPreference
-import android.support.v7.preference.EditTextPreference
-import android.support.v7.preference.ListPreference
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceFragmentCompat
-import android.support.v7.preference.PreferenceScreen
+import android.preference.PreferenceFragment
+import androidx.appcompat..CheckBoxPreference
+import androidx.appcompat.preference.EditTextPreference
+import androidx.appcompat.preference.ListPreference
+import androidx.appcompat.preference.Preference
+import androidx.appcompat.preference.PreferenceFragmentCompat
+import androidx.appcompat.preference.PreferenceScreen
 import android.widget.Toast
 
 import com.leadinsource.dailyweightlog.utils.Units
 
 
-/**
+*//**
  * Provides a list of settings, defined in preferences.xml.
  *
  *
  * Also implements listeners responsible for setting the summary for some of those settings and
  * checks if the value of the height in EditTextPreference is in order.
- */
+ *//*
 
-class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener {
+class SettingsFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,12 +70,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         }
     }
 
-    /**
+    *//**
      * Disables height preference if BMI not used
      *
      * @param sharedPreferences use by setHeightPreferenceSummary
      * @param key carries info which preference changed
-     */
+     *//*
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
 
@@ -135,4 +136,4 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         }
         return true
     }
-}
+} */
