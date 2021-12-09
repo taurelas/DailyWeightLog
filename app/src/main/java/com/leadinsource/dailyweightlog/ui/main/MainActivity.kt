@@ -16,6 +16,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
+import androidx.activity.viewModels
 import com.leadinsource.dailyweightlog.*
 import com.leadinsource.dailyweightlog.app.DWLApplication
 import com.leadinsource.dailyweightlog.databinding.ActivityMainBinding
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var defaultSharedPreferences: SharedPreferences
 
-    private var viewModel: MainActivityViewModel? = null
+    private val viewModel: MainActivityViewModel by viewModels()
 
     private val isHeightEmpty: Boolean
         get() = defaultSharedPreferences
@@ -51,15 +52,13 @@ class MainActivity : AppCompatActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        viewModel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
-
-        viewModel!!.weightEntered.observe(this, Observer { weightEntered ->
+     /*   viewModel.weightEntered.observe(this, Observer { weightEntered ->
             if (weightEntered!!) {
                 displayWeightAddedUI()
             } else {
                 displayWeightInputUI()
             }
-        })
+        })*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -129,17 +128,17 @@ class MainActivity : AppCompatActivity() {
 
         }*/
 
-        viewModel!!.addData(weight, fatPc)
+       // viewModel!!.addData(weight, fatPc)
     }
 
-    private fun displayWeightAddedUI() {
+   /* private fun displayWeightAddedUI() {
         binding.inputLayout?.root?.visibility = View.INVISIBLE
         binding.inputNoFat?.root?.visibility = View.INVISIBLE
         binding.todayLayout?.root?.visibility = View.VISIBLE
 
         // we put this here because only when stuff is added we need to schedule another one
        // ReminderUtils.scheduleWeightReminder(this)
-    }
+    }*/
 
     private fun displayWeightInputUI() {
         binding.todayLayout?.root?.visibility = View.INVISIBLE

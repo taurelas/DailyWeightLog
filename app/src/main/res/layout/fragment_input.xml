@@ -3,6 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="com.leadinsource.dailyweightlog.ui.main.MainActivityViewModel" />
+    </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -16,41 +21,26 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView2"
+        <EditText
+            android:id="@+id/etWeightInput"
+            android:minWidth="64dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="|"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_today_weight_label" />
+            android:layout_marginStart="32dp"
+            android:text="@={viewModel.weightEntered}"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_today_weight_label"
+            app:layout_constraintStart_toEndOf="@+id/tv_today_weight_label"
+            app:layout_constraintTop_toTopOf="@+id/tv_today_weight_label" />
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="81 82 83 84 85 86 87 88 89 90 91 92 93 94 95"
-            android:textAlignment="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-        <TextView
-            android:id="@+id/textView4"
+        <Button
+            android:id="@+id/btnSubmit"
+            android:enabled="@{viewModel.submitButtonEnabled}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="|"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            android:text="@string/submit"
+            android:onClick="@{() -> viewModel.onSubmitClicked()}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/etWeightInput"
+            app:layout_constraintTop_toTopOf="@+id/etWeightInput" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
