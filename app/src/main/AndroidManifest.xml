@@ -26,13 +26,6 @@
         <service
             android:name=".WeightReminderIntentService"
             android:exported="false" />
-        <service
-            android:name=".utils.ReminderJobService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.firebase.dispatcher.ACTION_EXECUTE" />
-            </intent-filter>
-        </service>
 
         <activity android:name=".ui.welcome.WelcomeActivity">
             <intent-filter>
@@ -42,5 +35,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
