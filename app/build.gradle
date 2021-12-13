@@ -42,6 +42,8 @@ dependencies {
     // Architecture components
     // ViewModel and LiveData
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
+    implementation 'androidx.fragment:fragment-ktx:1.4.0'
     // alternatively, just ViewModel
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
     // alternatively, just LiveData

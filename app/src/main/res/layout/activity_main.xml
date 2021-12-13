@@ -37,7 +37,7 @@
 
             <fragment
                 android:id="@+id/input"
-                android:name="com.leadinsource.dailyweightlog.ui.main.InputFragment"
+                android:name="com.leadinsource.dailyweightlog.ui.main.input.InputFragment"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginBottom="8dp"

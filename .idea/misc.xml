@@ -4,9 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout-sw600dp/activity_main.xml" value="0.1375" />
-        <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/activity_main.xml" value="0.18333333333333332" />
+        <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/activity_main.xml" value="0.375" />
         <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/activity_welcome.xml" value="0.18333333333333332" />
+        <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/fragment_input.xml" value="0.1" />
+        <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/fragment_input_experimental.xml" value="0.18333333333333332" />
+        <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/fragment_previous.xml" value="0.3333333333333333" />
+        <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/height_input.xml" value="0.18333333333333332" />
         <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/history_list_item.xml" value="0.18333333333333332" />
+        <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/slide_screen3.xml" value="0.18333333333333332" />
       </map>
     </option>
   </component>
