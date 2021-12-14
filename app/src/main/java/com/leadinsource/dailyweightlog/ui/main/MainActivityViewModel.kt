@@ -1,17 +1,21 @@
 package com.leadinsource.dailyweightlog.ui.main
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
+import androidx.lifecycle.*
 import com.leadinsource.dailyweightlog.db.Weight
+import com.leadinsource.dailyweightlog.db.WeightDatabase
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by Matt on 23/02/2018.
  * ViewModel shared with the MainActivity's fragments.
  */
-class MainActivityViewModel : ViewModel() {
+class MainActivityViewModel @Inject constructor(
+    val db: WeightDatabase
+) : ViewModel() {
 
     private var weights: MutableLiveData<Weight> = MutableLiveData()
 
@@ -24,10 +28,19 @@ class MainActivityViewModel : ViewModel() {
     }
 
     fun saveData(weight: Float, fatPc: Float? = null) {
+        viewModelScope.launch {
+            Log.d("DWL", "Saving weight $weight")
+            db.weightDao().insert(Weight(date = Date(), weightInKg = weight, fatPc = fatPc))
+        }
 
-        //TODO use ROOM to save data or better, save it to Drive if logged in
 
-        Log.d("DWL", "Saving weight $weight")
+
+
+        viewModelScope.launch {
+            Log.d("DWL", "data read: ${db.weightDao().getAll()}")
+        }
+
+        //TODO next use Google Drive to save it to Drive if logged in save as MD to share with Obisidian
     }
 
     fun onSubmitClicked() {

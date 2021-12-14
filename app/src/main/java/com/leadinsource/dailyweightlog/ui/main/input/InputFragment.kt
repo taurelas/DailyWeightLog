@@ -1,25 +1,29 @@
 package com.leadinsource.dailyweightlog.ui.main.input
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.activityViewModels
+import com.leadinsource.dailyweightlog.app.DWLApplication
 
-import com.leadinsource.dailyweightlog.R
 import com.leadinsource.dailyweightlog.databinding.FragmentInputBinding
 import com.leadinsource.dailyweightlog.ui.DataBindingFragment
 import com.leadinsource.dailyweightlog.ui.main.MainActivityViewModel
+import javax.inject.Inject
 
 /**
  * Standard input fragment, we need to have a working app.
  */
 class InputFragment : DataBindingFragment() {
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        DWLApplication.app().appComponent().inject(this)
+    }
+
     //viewModel shared with activity
-    private val viewModel: MainActivityViewModel by activityViewModels()
+    @Inject
+    lateinit var viewModel: MainActivityViewModel
 
     override fun inflateBinding(
         inflater: LayoutInflater,
