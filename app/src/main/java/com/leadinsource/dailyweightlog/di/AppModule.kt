@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import androidx.room.Room
+import com.leadinsource.dailyweightlog.data.WeightRepository
 import com.leadinsource.dailyweightlog.db.WeightDatabase
 import com.leadinsource.dailyweightlog.ui.main.MainActivityViewModel
 import com.leadinsource.dailyweightlog.ui.main.MainActivityViewModel_Factory
@@ -42,8 +43,14 @@ class AppModule(private val context: Context) {
 
     @Singleton
     @Provides
-    fun provideActivityViewModel(db: WeightDatabase): MainActivityViewModel {
-        return MainActivityViewModel_Factory.newInstance(db)
+    fun provideActivityViewModel(repository: WeightRepository): MainActivityViewModel {
+        return MainActivityViewModel_Factory.newInstance(repository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideWeightRepository(db: WeightDatabase): WeightRepository {
+        return WeightRepository(db)
     }
 
 }
