@@ -52,12 +52,8 @@ object Units {
         return cal.time
     }
 
-    fun getFatPcString(fatPc: Float): String {
-        return if (fatPc == 0.0f) {
-            ""
-        } else {
-            fatPc.toString() + " %"
-        }
-
+    fun getFatPcString(fatPc: Float?) = when (fatPc) {
+        null, 0.0f -> ""
+        else -> "$fatPc %"
     }
 }

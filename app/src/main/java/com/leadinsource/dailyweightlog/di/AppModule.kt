@@ -3,6 +3,11 @@ package com.leadinsource.dailyweightlog.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import androidx.room.Room
+import com.leadinsource.dailyweightlog.data.WeightRepository
+import com.leadinsource.dailyweightlog.db.WeightDatabase
+import com.leadinsource.dailyweightlog.ui.main.MainActivityViewModel
+import com.leadinsource.dailyweightlog.ui.main.MainActivityViewModel_Factory
 
 import javax.inject.Singleton
 
@@ -25,6 +30,27 @@ class AppModule(private val context: Context) {
     @Provides
     fun provideSharedPreferences(context: Context): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideDatabase(context: Context): WeightDatabase {
+        return Room.databaseBuilder(
+            context.applicationContext,
+            WeightDatabase::class.java, "weights"
+        ).build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideActivityViewModel(repository: WeightRepository): MainActivityViewModel {
+        return MainActivityViewModel_Factory.newInstance(repository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideWeightRepository(db: WeightDatabase): WeightRepository {
+        return WeightRepository(db)
     }
 
 }

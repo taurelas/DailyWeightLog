@@ -17,7 +17,7 @@ const val COLUMN_DATE = "date"
 const val COLUMN_WEIGHT_IN_KG = "weight_in_kg"
 const val COLUMN_FAT_PC = "fat_pc"
 
-@Entity(tableName = TABLE_NAME)
+@Entity
 data class Weight(
 
     @PrimaryKey(autoGenerate = true)
@@ -25,11 +25,11 @@ data class Weight(
     var id: Int = 0,
 
     @ColumnInfo(name = COLUMN_DATE)
-    var date: Date? = null,
+    var date: Date,
 
     @ColumnInfo(name = COLUMN_WEIGHT_IN_KG)
-    var weightInKg: Float = 0.toFloat(),
+    var weightInKg: Float = 0.0f,
 
     @ColumnInfo(name = COLUMN_FAT_PC)
-    var fatPc: Float = 0.toFloat(),
+    var fatPc: Float? = null,
 )

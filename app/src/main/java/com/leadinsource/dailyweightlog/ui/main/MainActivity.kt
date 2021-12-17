@@ -37,7 +37,8 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var defaultSharedPreferences: SharedPreferences
 
-    private val viewModel: MainActivityViewModel by viewModels()
+    @Inject
+    lateinit var viewModel: MainActivityViewModel
 
     private val isHeightEmpty: Boolean
         get() = defaultSharedPreferences

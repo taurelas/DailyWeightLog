@@ -27,6 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
+            android:inputType="numberDecimal"
             android:text="@={viewModel.weightEntered}"
             app:layout_constraintBottom_toBottomOf="@+id/tv_today_weight_label"
             app:layout_constraintStart_toEndOf="@+id/tv_today_weight_label"

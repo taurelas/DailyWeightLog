@@ -21,11 +21,6 @@ class DWLApplication : Application() {
 
         app = this
 
-        Room.databaseBuilder(
-            applicationContext,
-            WeightDatabase::class.java, "weights"
-        )
-
     }
 
     fun appComponent(): AppComponent {
