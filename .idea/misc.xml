@@ -3,7 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout-land/history_list_item.xml" value="0.2625" />
         <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/activity_main_input.xml" value="0.16927083333333334" />
+        <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/activity_main_previous.xml" value="0.259107789442706" />
+        <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/fragment_previous.xml" value="0.1" />
+        <entry key="../../../../private/var/maciej.beimcik/Repos/DailyWeightLog/app/src/main/res/layout/history_list_item.xml" value="0.1" />
       </map>
     </option>
   </component>

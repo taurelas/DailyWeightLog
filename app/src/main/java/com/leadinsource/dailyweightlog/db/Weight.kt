@@ -25,7 +25,7 @@ data class Weight(
     var id: Int = 0,
 
     @ColumnInfo(name = COLUMN_DATE)
-    var date: Date? = null,
+    var date: Date,
 
     @ColumnInfo(name = COLUMN_WEIGHT_IN_KG)
     var weightInKg: Float = 0.0f,
