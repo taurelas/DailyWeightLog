@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.leadinsource.dailyweightlog">
+    package="com.olibei.dailyweightlog">
 
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name=".app.DWLApplication"
+        android:name="com.olibei.dailyweightlog.app.DWLApplication"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,20 +14,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name="com.olibei.dailyweightlog.ui.main.MainActivity"
             android:launchMode="singleTop">
 
         </activity>
         <activity
-            android:name=".SettingsActivity"
-            android:parentActivityName=".ui.main.MainActivity" />
-        <activity android:name=".HistoryActivity" />
+            android:name="com.olibei.dailyweightlog.SettingsActivity"
+            android:parentActivityName="com.olibei.dailyweightlog.ui.main.MainActivity" />
+        <activity android:name="com.olibei.dailyweightlog.HistoryActivity" />
 
         <service
-            android:name=".WeightReminderIntentService"
+            android:name="com.olibei.dailyweightlog.WeightReminderIntentService"
             android:exported="false" />
 
-        <activity android:name=".ui.welcome.WelcomeActivity">
+        <activity android:name="com.olibei.dailyweightlog.ui.welcome.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    class="com.leadinsource.dailyweightlog.ui.main.ChartFragment"
-    tools:context="com.leadinsource.dailyweightlog.ui.main.ChartFragment">
+    class="com.olibei.dailyweightlog.ui.main.ChartFragment"
+    tools:context="com.olibei.dailyweightlog.ui.main.ChartFragment">
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"

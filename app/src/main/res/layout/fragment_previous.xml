@@ -4,7 +4,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.leadinsource.dailyweightlog.ui.main.MainActivityViewModel" />
+            type="com.olibei.dailyweightlog.ui.main.MainActivityViewModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
 
