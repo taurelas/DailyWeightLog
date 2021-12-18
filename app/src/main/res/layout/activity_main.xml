@@ -16,7 +16,7 @@
 
             <fragment
                 android:id="@+id/chart"
-                android:name="com.leadinsource.dailyweightlog.ui.main.ChartFragment"
+                android:name="com.olibei.dailyweightlog.ui.main.ChartFragment"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginBottom="8dp"
@@ -37,7 +37,7 @@
 
             <fragment
                 android:id="@+id/input"
-                android:name="com.leadinsource.dailyweightlog.ui.main.input.InputFragment"
+                android:name="com.olibei.dailyweightlog.ui.main.input.InputFragment"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginBottom="8dp"
@@ -52,7 +52,7 @@
 
             <fragment
                 android:id="@+id/previous"
-                android:name="com.leadinsource.dailyweightlog.ui.main.PreviousFragment"
+                android:name="com.olibei.dailyweightlog.ui.main.PreviousFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
