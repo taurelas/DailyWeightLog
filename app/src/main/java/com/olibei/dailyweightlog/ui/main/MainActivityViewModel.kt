@@ -53,6 +53,7 @@ class MainActivityViewModel @Inject constructor(
             val weightData = Weight(date = Date(), weightInKg = weight, fatPc = fatPc)
             repo.addWeight(weightData)
             loadData()
+            repo.exportTextFile()
         }
 
         // TODO next use Google Drive to save it to Drive if logged in save as MD to share with Obisidian

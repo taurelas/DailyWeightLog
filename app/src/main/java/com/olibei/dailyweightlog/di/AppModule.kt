@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import androidx.room.Room
+import com.olibei.dailyweightlog.data.DateConverter
+import com.olibei.dailyweightlog.data.FileRepository
 import com.olibei.dailyweightlog.data.WeightRepository
 import com.olibei.dailyweightlog.db.WeightDatabase
 import com.olibei.dailyweightlog.ui.main.MainActivityViewModel
@@ -49,8 +51,18 @@ class AppModule(private val context: Context) {
 
     @Singleton
     @Provides
-    fun provideWeightRepository(db: WeightDatabase): WeightRepository {
-        return WeightRepository(db)
+    fun provideWeightRepository(db: WeightDatabase, fileRepository: FileRepository, dateConverter: DateConverter): WeightRepository {
+        return WeightRepository(db, fileRepository, dateConverter)
+    }
+
+    @Singleton
+    fun provideFileRepository(context: Context): FileRepository {
+        return FileRepository(context)
+    }
+
+    @Singleton
+    fun provideDateConverter(context: Context): DateConverter {
+        return DateConverter(context)
     }
 
 }
